@@ -1,5 +1,5 @@
 <script>
-  import hover from './hover';
+  import hover from './stores/hover';
   import config from './buttons';
 
   function getButton(id) {

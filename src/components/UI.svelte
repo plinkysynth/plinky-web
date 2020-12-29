@@ -5,12 +5,16 @@
 
   import { buttons, knobs, screens, touchstrips, ui } from '../lib/config';
 
-  import hover from './hover';
-  import grabbing from './grabbing';
+  import hover from './stores/hover';
+
+  import grabbing from './stores/grabbing';
+  import touching, { touchstart } from './stores/touching';
+
   import Button from './Button.svelte';
   import Knob from './Knob.svelte';
   import Screen from './Screen.svelte';
   import TouchStrip from './TouchStrip.svelte';
+  import styleFormatter from './styleFormatter';
 
   let x = 3;
 
@@ -45,9 +49,19 @@
   .UI.grabbing * {
     pointer-events: none;
   }
+  .UI.touching {
+    cursor: move;
+  }
 </style>
 
-<div class='UI' class:grabbing={$grabbing !== ''} style='border-radius: { ui.borderRadius ? ui.borderRadius : '0' }; background-color: { ui.backgroundColor ? ui.backgroundColor : undefined }; width: {ui.width}px; height: {ui.height}px; background-image: { ui.backgroundImage ? `url(${ui.backgroundImage})` : undefined };' on:mouseleave={mouseout}>
+<div
+  class='UI'
+  class:grabbing={$grabbing !== ''}
+  class:touching={$touching}
+  style='{styleFormatter(ui)}' 
+  on:mouseleave={mouseout}
+  on:touchstart={touchstart}
+>
   <div class='Screens'>
     {#each screens as screen, i}
       <Screen {screen} />

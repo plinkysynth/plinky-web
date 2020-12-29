@@ -1,26 +1,35 @@
 <script>
 
-  import hover from './hover';
-  import grabbing from './grabbing';
+  import hover from './stores/hover';
+  import { registerTouchable } from './stores/touching';
   import styleFormatter from './styleFormatter';
   import { onMount } from 'svelte';
   import Synth from '../lib/Synth';
+
   export let strip;
 
-  let node;
+  let DOMNode;
+  
+  const DOMId = `Touchstrip-${strip.group}-${strip.id}`;
+
+  strip.touchstripMove = function(x, y) {
+    
+  }
 
   onMount(() => {
-    Synth.registerTouchstrip(strip, node);
+    Synth.registerTouchstrip(strip, DOMNode, DOMId);
+    registerTouchable('touchstrip', strip);
   })
 
-  let _grabbing = false;
-  let grabStartX, grabStartY, curGrabAmtY, curGrabAmtX;
+  function touchstart(e) {
 
-  function mousedown(mde) {
+    console.log(e);
+    registerFinger(e, strip.group, strip.id, e.screenX, e.screenY);
 
-    if(!_grabbing) {
+    /*
+    if(!_touching) {
       
-      _grabbing = true;
+      _touching = true;
 
       // Get bottom left corner of this strip on the screen so we can provide
       // relative x/y coordinates starting from there on mousemove
@@ -30,7 +39,7 @@
       // Call down event with the offset
       Synth.touchstripDown(strip.id, mde.offsetX, (strip.height - mde.offsetY));
 
-      grabbing.set({
+      touching.set({
         type: 'touchstrip',
         id: strip.id
       });
@@ -41,8 +50,8 @@
 
       const muEv = (mue) => {
         Synth.touchstripUp(strip.id, mue.offsetX, mue.offsetY)
-        _grabbing = false;
-        grabbing.set("");
+        _touching = false;
+        touching.set("");
         window.removeEventListener('mousemove', mmEv);
         window.removeEventListener('mouseup', muEv);
       };
@@ -51,6 +60,7 @@
       window.addEventListener('mouseup', muEv);
 
     }
+    */
 
   }
 
@@ -63,5 +73,5 @@
   }
 </style>
 
-<div class="TouchStrip" style={styleFormatter(strip)} bind:this={node} on:mousedown={mousedown}>
+<div class="TouchStrip touchable" style={styleFormatter(strip)} bind:this={DOMNode} id={DOMId}>
 </div>

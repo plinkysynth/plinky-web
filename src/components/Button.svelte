@@ -1,6 +1,6 @@
 <script>
 
-  import hover from './hover';
+  import hover from './stores/hover';
   import { buttons } from '../lib/config';
 
   export let btn;

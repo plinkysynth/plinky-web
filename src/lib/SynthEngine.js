@@ -76,22 +76,23 @@ class SynthEngine {
    * @param {*} item 
    * @param {*} node 
    */
-  registerNode(target, item, DOMNode) {
+  registerNode(target, item, DOMNode, DOMId) {
     console.log('Registering node', item.id, DOMNode);
     target = target.map(t => {
       if(t.id === item.id) {
         t.DOMNode = DOMNode;
+        t.DOMId = DOMId;
       }
       return t;
     });
   }
 
-  registerButton(item, DOMNode)     { this.registerNode(this.buttons, item, DOMNode); }
-  registerConnector(item, DOMNode)  { this.registerNode(this.connectors, item, DOMNode); }
-  registerKnob(item, DOMNode)       { this.registerNode(this.knobs, item, DOMNode); }
-  registerLed(item, DOMNode)        { this.registerNode(this.leds, item, DOMNode); }
-  registerScreen(item, DOMNode)     { this.registerNode(this.screens, item, DOMNode); }
-  registerTouchstrip(item, DOMNode) { this.registerNode(this.touchstrips, item, DOMNode); }
+  registerButton(item, DOMNode, DOMId)     { this.registerNode(this.buttons, item, DOMNode, DOMId); }
+  registerConnector(item, DOMNode, DOMId)  { this.registerNode(this.connectors, item, DOMNode, DOMId); }
+  registerKnob(item, DOMNode, DOMId)       { this.registerNode(this.knobs, item, DOMNode, DOMId); }
+  registerLed(item, DOMNode, DOMId)        { this.registerNode(this.leds, item, DOMNode, DOMId); }
+  registerScreen(item, DOMNode, DOMId)     { this.registerNode(this.screens, item, DOMNode, DOMId); }
+  registerTouchstrip(item, DOMNode, DOMId) { this.registerNode(this.touchstrips, item, DOMNode, DOMId); }
 
   getButtonById(id)     { return this.buttons.find(item => item.id === id); }
   getConnectorById(id)  { return this.connectors.find(item => item.id === id); }
@@ -101,9 +102,46 @@ class SynthEngine {
   getScreenById(id)     { return this.screens.find(item => item.id === id); }
 
   // Touchstrips
-  touchstripMove(stripId, x, y) {}
-  touchstripDown(stripId, x, y) {}
-  touchstripUp(stripId, x, y) {}
+  touchstripDown(stripId, x, y) {
+    
+    const pos = this.translateTouchstripPosition(stripId, x, y);
+
+    this.currentTouch = {
+      stripIndex: stripId,
+      position: pos[1],
+      pressure: pos[0]
+    };
+    
+    console.log('touchstripdown', this.currentTouch);
+    
+  }
+
+  touchstripMove(stripId, x, y) {
+
+    const pos = this.translateTouchstripPosition(stripId, x, y);
+
+    this.currentTouch = {
+      stripIndex: stripId,
+      position: pos[1],
+      pressure: pos[0]
+    };
+
+    console.log('touchstripmove', this.currentTouch);
+
+  }
+
+  touchstripUp(stripId, x, y) {
+
+    const pos = this.translateTouchstripPosition(stripId, x, y);
+
+    this.currentTouch = {
+      stripIndex: stripId,
+      position: pos[1],
+      pressure: 0
+    };
+    
+    console.log('touchstripup', this.currentTouch);
+  }
 
   // Knobs
   // Screens

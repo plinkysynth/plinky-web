@@ -55,7 +55,6 @@ class SynthInterface extends SynthEngine {
 
     // Set touch event position
     if(this.currentTouch) {
-      console.log('touch');
       _wasm_settouch(this.currentTouch.stripIndex, this.currentTouch.position, this.currentTouch.pressure);
     }
 
@@ -85,63 +84,50 @@ class SynthInterface extends SynthEngine {
     this.audioCtx.suspend();
   }
 
+  setFingers(fingers) {
+
+    fingers.forEach(finger => {
+
+      // Set fingers on touchstrips
+      if(finger.touchable && finger.touchable.touchableType === 'touchstrip') {
+        //this.touchstripMove(finger.touchable.id, finger.touchable.x, finger.touchable.y);
+      }
+
+    });
+
+  }
+
   /**
    * Translate touch strip position from x, y to value range defined in touchstrips.json
    * @param {String} stripId Strip ID
    * @param {Number} x  X position on strip (relative from bottom left)
    * @param {Number} y  Y position on strip (relative from bottom left)
    */
-  translateTouchstripPositionToPressure(stripId, x, y) {
+  translateTouchstripPosition(stripId, x, y) {
 
     const strip = this.getTouchstripById(stripId);
 
-    // Zero point for pressure is in the vertical center of the strip
+    // Max point for pressure is in the vertical center of the strip
+    const halfStrip = strip.width / 2;
+    if(x > halfStrip) {
+      x = x - halfStrip;
+    }
+    else if(x < halfStrip) {
+      x = halfStrip - x;
+    }
+    else {
+      x = 0;
+    }
 
-    const translatedX = Math.ceil(scaleValue(x, strip.minX, strip.maxX, strip.minX, strip.width, strip.minX));
-    const translatedY = strip.maxY - Math.ceil(scaleValue(y, strip.minY, strip.maxY, strip.minY, strip.height, strip.minY));
+    x = strip.width - x*2;
+
+    let translatedX = Math.ceil(scaleValue(x, strip.minX, strip.maxX, strip.minX, strip.width, strip.minX));
+    let translatedY = strip.maxY - Math.ceil(scaleValue(y, strip.minY, strip.maxY, strip.minY, strip.height, strip.minY));
+
+    if(translatedX < 0) translatedX = 0;
+    if(translatedY < 0) translatedY = 0;
 
     return [translatedX, translatedY]
-  }
-
-  touchstripDown(stripId, x, y) {
-    
-    const pos = this.translateTouchstripPositionToPressure(stripId, x, y);
-
-    this.currentTouch = {
-      stripIndex: stripId,
-      position: pos[1],
-      pressure: pos[0]
-    };
-    
-    console.log('touchstripdown', this.currentTouch);
-    
-  }
-
-  touchstripMove(stripId, x, y) {
-
-    const pos = this.translateTouchstripPositionToPressure(stripId, x, y);
-
-    this.currentTouch = {
-      stripIndex: stripId,
-      position: pos[1],
-      pressure: pos[0]
-    };
-
-    console.log('touchstripmove', this.currentTouch);
-
-  }
-
-  touchstripUp(stripId, x, y) {
-
-    const pos = this.translateTouchstripPositionToPressure(stripId, x, y);
-
-    this.currentTouch = {
-      stripIndex: stripId,
-      position: pos[1],
-      pressure: 0
-    };
-    
-    console.log('touchstripup', this.currentTouch);
   }
 
   render() {

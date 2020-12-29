@@ -1,6 +1,6 @@
 <script>
-  import hover from './hover';
-  import grabbing from './grabbing';
+  import hover from './stores/hover';
+  import grabbing from './stores/grabbing';
   import { knobs } from '../lib/config';
   import styleFormatter from './styleFormatter';
   export let knob = {};
