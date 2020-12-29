@@ -7,14 +7,10 @@ let _touching = false;
 
 export default touching;
 
-export function ontouchmove(e) {
-  console.log(e);
-}
-
 let fingers = [];
 let touchables = [];
 
-function getTouchableByDOMId(DOMId) {
+export function getTouchableByDOMId(DOMId) {
   return DOMId ? touchables.find(touchable => touchable.DOMId === DOMId) : null;
 }
 
@@ -43,7 +39,8 @@ export function touchstart(e) {
       x: e.screenX,
       y: e.screenY,
       force: 1,
-      touchable
+      touchable,
+      started: new Date()
     }];
 
   }
@@ -60,7 +57,8 @@ export function touchstart(e) {
         x: touch.screenX,
         y: touch.screenY,
         force: touch.force,
-        touchable
+        touchable,
+        started: new Date()
       });
 
     }
@@ -75,12 +73,14 @@ export function touchstart(e) {
   // Only add these if we're not touching yet
   if(!_touching) {
 
+    console.log("TOUCHIGN!!!!!!!!!");
+
     // Now we're touching
     _touching = true;
     touching.set(true);
 
     // What to do when someone moves their fingers while touching :o
-    let touchMoveEvent = window.addEventListener('touchmove', moveEvent => {
+    const touchMoveEvent = (moveEvent) => {
 
       // changedTouches is not iterable.. oh my
       for(let i=0; i < moveEvent.changedTouches.length; i++) {
@@ -102,16 +102,17 @@ export function touchstart(e) {
           return finger;
         });
 
-        console.log(fingers[0].touchable.id, touch.screenX, touch);
+        //console.log(fingers[0].touchable.id, touch.screenX, touch, moveEvent);
+        console.log(moveEvent.target.id);
 
         Synth.setFingers(fingers);
 
       }
 
-    });
+    };
 
     // What to do when someone stops touching us :(
-    let touchEndEvent = window.addEventListener('touchend', endEvent => {
+    const touchEndEvent = (endEvent) => {
 
       // Again not iterable..
       for(let i=0; i < endEvent.changedTouches.length; i++) {
@@ -131,7 +132,10 @@ export function touchstart(e) {
         window.removeEventListener('touchmove', touchMoveEvent);
       }
 
-    });
+    };
+
+    window.addEventListener('touchmove', touchMoveEvent);
+    window.addEventListener('touchend', touchEndEvent);
 
   }
 
