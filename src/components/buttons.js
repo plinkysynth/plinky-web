@@ -1,63 +1,4 @@
 export default {
-  "width": 1024,
-  "height": 1076,
-  "config": {
-    "knobs": {
-      "minmax": {
-        "width": 59,
-        "height": 59,
-        "backgroundColor": "#000000",
-        "borderColor": "#FFFFFF",
-        "tipColor": "#FFFFFF"
-      },
-      "endless": {
-        "width": 60,
-        "height": 60,
-        "backgroundColor": "#000000",
-        "borderColor": "#FFFFFF"
-      }
-    },
-    "buttons": {
-      "rw": {
-        "width": 85,
-        "height": 85,
-        "ledX": "-7%",
-        "ledY": "6%",
-        "led": "#FFFFFF",
-        "borderRadius": "50%"
-      },
-      "rb": {
-        "width": 85,
-        "height": 85,
-        "led": "#4444FF",
-        "ledX": "42.5%",
-        "ledY": "-6%",
-        "borderRadius": "50%"
-      }
-    }
-  },
-  "connectors": [
-  ],
-  "knobs": [
-    {
-      "id": "KNOBA",
-      "type": "minmax",
-      "x": 190,
-      "y": 105
-    },
-    {
-      "id": "KNOBB",
-      "type": "minmax",
-      "x": 335,
-      "y": 105
-    },
-    {
-      "id": "KNOBP",
-      "type": "endless",
-      "x": 752,
-      "y": 105
-    }
-  ],
   "buttons": [
 
     //
@@ -77,7 +18,6 @@ export default {
           "name": "",
           "help": "",
           "cc": -1,
-          "signed": false,
           "min": 0,
           "max": 255
         },
@@ -86,7 +26,6 @@ export default {
           "name": "",
           "help": "",
           "cc": -1,
-          "signed": false,
           "min": 0,
           "max": 255
         }
@@ -104,8 +43,7 @@ export default {
           "id": "P_PWM",
           "name": "Shape",
           "help": "",
-          "cc": -1,
-          "signed": false,
+          "cc": 13,
           "min": 0,
           "max": 0
         },
@@ -113,8 +51,7 @@ export default {
           "id": "P_NOISE",
           "name": "Noise",
           "help": "",
-          "cc": -1,
-          "signed": false,
+          "cc": 2,
           "min": 0,
           "max": 0
         }
@@ -127,24 +64,24 @@ export default {
       "icon": "101",
       "x": 319,
       "y": 212,
-      "upper": {
-        "id": "P_DRIVE",
-        "name": "Distortion",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      },
-      "lower": {
-        "id": "P_MIXRESO",
-        "name": "Resonance",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      }
+      "params": [
+        {
+          "id": "P_DRIVE",
+          "name": "Distortion",
+          "help": "",
+          "cc": 4,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_MIXRESO",
+          "name": "Resonance",
+          "help": "",
+          "cc": 71,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b103",
@@ -153,24 +90,24 @@ export default {
       "icon": "102",
       "x": 419,
       "y": 212,
-      "upper": {
-        "id": "P_PITCH",
-        "name": "Pitch",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      },
-      "lower": {
-        "id": "P_ROTATE",
-        "name": "Degree",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      }
+      "params": [
+        {
+          "id": "P_PITCH",
+          "name": "Pitch",
+          "help": "",
+          "cc": 9,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_ROTATE",
+          "name": "Degree",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b104",
@@ -179,72 +116,94 @@ export default {
       "icon": "103",
       "x": 521,
       "y": 212,
-      "upper": {
-        "id": "P_OCT",
-        "name": "Octave",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      },
-      "lower": {
-        "id": "P_SCALE",
-        "name": "Scale",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      }
+      "params": [
+        {
+          "id": "P_OCT",
+          "name": "Octave",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_SCALE",
+          "name": "Scale",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b105",
       "category": "SOUND",
-      "name": "Glide / Microtone",
-      "help": "",
       "type": "rw",
       "icon": "104",
       "x": 622,
       "y": 212,
-      "upper": {
-        "id": "P_GLIDE",
-        "name": "Glide",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      },
-      "lower": {
-        "id": "P_MICROTUNE",
-        "name": "Microtone",
-        "help": "",
-        "cc": -1,
-        "signed": false,
-        "min": 0,
-        "max": 0
-      }
+      "params": [
+        {
+          "id": "P_GLIDE",
+          "name": "Glide",
+          "help": "",
+          "cc": 5,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_MICROTUNE",
+          "name": "Microtone",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b106",
       "category": "SOUND",
-      "name": "Osc interval / Column",
-      "help": "",
       "type": "rw",
       "icon": "105",
       "x": 724,
-      "y": 212
+      "y": 212,
+      "params": [
+        {
+          "id": "P_INTERVAL",
+          "name": "Osc Interval",
+          "help": "",
+          "cc": 14,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_STRIDE",
+          "name": "Column",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b107",
       "category": "SOUND",
-      "name": "Base",
-      "help": "",
       "type": "rw",
       "icon": "106",
       "x": 825,
-      "y": 212
+      "y": 212,
+      "params": [
+        {
+          "id": "M_BASE",
+          "name": "Base",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
 
     //
@@ -254,62 +213,158 @@ export default {
     {
       "id": "b200",
       "category": "ENV",
-      "name": "Value",
-      "help": "",
       "type": "rw",
       "icon": "205",
       "x": 117,
-      "y": 306
+      "y": 306,
+      "params": [
+        {
+          "id": "VAL2A",
+          "name": "",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "VAL2B",
+          "name": "",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b201",
       "category": "ENV",
-      "name": "Sensitivity / ENV 2 level",
-      "help": "",
       "type": "rw",
       "icon": "200",
       "x": 217,
-      "y": 306
+      "y": 306,
+      "params": [
+        {
+          "id": "P_SENS",
+          "name": "Sensitivity",
+          "help": "",
+          "cc": 3,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_ENV_LEVEL",
+          "name": "Envelope 2 level",
+          "help": "",
+          "cc": 19,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b202",
       "category": "ENV",
-      "name": "ENV 1 Attack / ENV 2 Attack",
-      "help": "",
       "type": "rw",
       "icon": "201",
       "x": 319,
-      "y": 306
+      "y": 306,
+      "params": [
+        {
+          "id": "P_A",
+          "name": "Envelope 1 - Attack",
+          "help": "",
+          "cc": 73,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_A2",
+          "name": "Envelope 2 - Attack",
+          "help": "",
+          "cc": 20,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b203",
       "category": "ENV",
-      "name": "ENV 1 Decay / ENV 2 Decay",
-      "help": "",
       "type": "rw",
       "icon": "102",
       "x": 419,
-      "y": 306
+      "y": 306,
+      "params": [
+        {
+          "id": "P_D",
+          "name": "Envelope 1 - Decay",
+          "help": "",
+          "cc": 75,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_D2",
+          "name": "Envelope 2 - Decay",
+          "help": "",
+          "cc": 21,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b204",
       "category": "ENV",
-      "name": "ENV 1 Sustain / ENV 2 Sustain",
-      "help": "",
       "type": "rw",
       "icon": "203",
       "x": 521,
-      "y": 306
+      "y": 306,
+      "params": [
+        {
+          "id": "P_S",
+          "name": "Envelope 1 - Sustain",
+          "help": "",
+          "cc": 74,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_S2",
+          "name": "Envelope 2 - Sustain",
+          "help": "",
+          "cc": 22,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b205",
       "category": "ENV",
-      "name": "ENV 1 Release / ENV 2 Release",
-      "help": "",
       "type": "rw",
       "icon": "204",
       "x": 622,
-      "y": 306
+      "y": 306,
+      "params": [
+        {
+          "id": "P_R",
+          "name": "Envelope 1 - Release",
+          "help": "",
+          "cc": 72,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_R2",
+          "name": "Envelope 2 - Release",
+          "help": "",
+          "cc": 23,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b206",
@@ -325,12 +380,20 @@ export default {
     {
       "id": "b207",
       "category": "ENV",
-      "name": "ENV",
-      "help": "",
       "type": "rw",
       "icon": "206",
       "x": 825,
-      "y": 306
+      "y": 306,
+      "params": [
+        {
+          "id": "M_ENV",
+          "name": "ENV",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
 
     //
@@ -340,82 +403,194 @@ export default {
     {
       "id": "b300",
       "category": "FX",
-      "name": "Value",
-      "help": "",
       "type": "rw",
       "icon": "205",
       "x": 117,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "VAL3A",
+          "name": "",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "VAL3B",
+          "name": "",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b301",
       "category": "FX",
-      "name": "Delay send amt / Reverb send amt",
-      "help": "",
       "type": "rw",
       "icon": "300",
       "x": 217,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "P_DLSEND",
+          "name": "Delay send amount",
+          "help": "",
+          "cc": 94,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_RVSEND",
+          "name": "Reverb send amount",
+          "help": "",
+          "cc": 91,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b302",
       "category": "FX",
-      "name": "Delay time / Reverb time",
-      "help": "",
       "type": "rw",
       "icon": "301",
       "x": 319,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "P_DLTIME",
+          "name": "Delay time",
+          "help": "",
+          "cc": 12,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_RVTIME",
+          "name": "Reverb time",
+          "help": "",
+          "cc": 92,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b303",
       "category": "FX",
-      "name": "Delay pingpong amt / Reverb shimmer amt",
-      "help": "",
       "type": "rw",
       "icon": "302",
       "x": 419,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "P_DLRATIO",
+          "name": "Delay pingpong amount",
+          "help": "",
+          "cc": 112,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_RVSHIM",
+          "name": "Reverb shimmer amount",
+          "help": "",
+          "cc": 93,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b304",
       "category": "FX",
-      "name": "Delay wobble / Reverb wobble",
-      "help": "",
       "type": "rw",
       "icon": "303",
       "x": 521,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "P_DLWOB",
+          "name": "Delay wobble",
+          "help": "",
+          "cc": 113,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_RVWOB",
+          "name": "Reverb wobble",
+          "help": "",
+          "cc": 114,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b305",
       "category": "FX",
-      "name": "Feedback amt",
-      "help": "",
       "type": "rw",
       "icon": "304",
       "x": 622,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "P_DLFB",
+          "name": "Delay feedback amount",
+          "help": "",
+          "cc": 95,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b306",
       "category": "FX",
-      "name": "Tempo / Swing",
-      "help": "",
       "type": "rw",
       "icon": "305",
       "x": 724,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "P_TEMPO",
+          "name": "Tempo",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "P_SWING",
+          "name": "Swing amount",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b307",
       "category": "FX",
-      "name": "Pressure",
-      "help": "",
       "type": "rw",
       "icon": "306",
       "x": 825,
-      "y": 401
+      "y": 401,
+      "params": [
+        {
+          "id": "M_PRESSURE",
+          "name": "Pressure",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
 
     //
@@ -425,22 +600,55 @@ export default {
     {
       "id": "b400",
       "category": "SEQ / ARP",
-      "name": "Value",
-      "help": "",
       "type": "rw",
       "icon": "205",
       "x": 117,
-      "y": 497
+      "y": 497,
+      "params": [
+        {
+          "id": "VAL4A",
+          "name": "",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        },
+        {
+          "id": "VAL4B",
+          "name": "",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b401",
       "category": "SEQ / ARP",
-      "name": "ARP toggle / Latch toggle",
-      "help": "",
       "type": "rw",
       "icon": "400",
       "x": 217,
-      "y": 497
+      "y": 497,
+      "params": [
+        {
+          "id": "P_ARPONOFF",
+          "type": "bool",
+          "name": "ARP on/off",
+          "help": "",
+          "cc": 102,
+          "min": 0,
+          "max": 1
+        },
+        {
+          "id": "P_LATCHONOFF",
+          "name": "Latch on/off",
+          "help": "",
+          "cc": -1,
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     {
       "id": "b402",
@@ -450,7 +658,41 @@ export default {
       "type": "rw",
       "icon": "401",
       "x": 319,
-      "y": 497
+      "y": 497,
+      "params": [
+        {
+          "id": "P_ARPONOFF",
+          "type": "enum",
+          "name": "ARP play order",
+          "help": "",
+          "cc": 102,
+          "enum": [
+            "ARP_UP",
+            "ARP_DOWN",
+            "ARP_UPDOWN",
+            "ARP_UPDOWNREP",
+            "ARP_PEDALUP",
+            "ARP_PEDALDOWN",
+            "ARP_PEDALUPDOWN",
+            "ARP_RANDOM",
+            "ARP_RANDOM2",
+            "ARP_ALL",
+            "ARP_UP8",
+            "ARP_DOWN8",
+            "ARP_UPDOWN8",
+            "ARP_RANDOM8",
+            "ARP_RANDOM28",
+            "ARP_LAST"
+          ]
+        },
+        {
+          "id": "P_LATCHONOFF",
+          "type": "bool",
+          "name": "Latch on/off",
+          "help": "",
+          "cc": -1
+        }
+      ]
     },
     {
       "id": "b403",

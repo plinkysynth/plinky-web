@@ -1,14 +1,16 @@
 <script>
 
+  import { onMount } from 'svelte';
+  import { get } from 'svelte/store';
+
+  import { buttons, knobs, screens, ui } from '../lib/config';
+
   import hover from './hover';
   import grabbing from './grabbing';
-  import { onMount } from "svelte";
-  import Button from "./Button.svelte";
-  import config from "./buttons.js";
-  import { get } from 'svelte/store';
+  import Button from './Button.svelte';
   import Knob from './Knob.svelte';
-
-  const { buttons, knobs, screens, connectors } = config;
+  import Screen from './Screen.svelte';
+  import TouchStrip from './TouchStrip.svelte';
 
   let x = 3;
 
@@ -18,11 +20,11 @@
   }, 250);
 
   const isActive = function(i, y, h) {
-    return h === "" && i % y === 0;
+    return h === '' && i % y === 0;
   }
 
   const mouseout = function(e) {
-    hover.set("");
+    hover.set('');
   }
 
 </script>
@@ -30,30 +32,12 @@
 <style>
   .UI {
     border-radius: 6px;
-    background-image: url('/plinky_alpha.png');
     background-repeat: no-repeat;
     background-size: contain;
     position: relative;
     display: block;
     box-shadow: 0px 16px 32px 0px rgba(0, 0, 0, 1);
     z-index: 2;
-    border-radius: 18px;
-    background-color: #111;
-  }
-  .Logo {
-    margin: 0 auto;
-    width: 128px;
-  }
-  .Logo img {
-    width: 100%;
-  }
-  .Screen {
-    position: absolute;
-    top: 103px;
-    left: 468px;
-    background-color: rgba(20, 0, 147, 0.5);
-    width: 199px;
-    height: 65px;
   }
   .UI.grabbing {
     cursor: grabbing;
@@ -63,17 +47,22 @@
   }
 </style>
 
-<div class="UI" class:grabbing={$grabbing !== ""} style="min-width: {config.width}px; width: {config.width}px; height: {config.height}px;" on:mouseleave={mouseout}>
-  <div class="Logo">
+<div class='UI' class:grabbing={$grabbing !== ''} style='border-radius: { ui.borderRadius ? ui.borderRadius : '0' }; background-color: { ui.backgroundColor ? ui.backgroundColor : undefined }; width: {ui.width}px; height: {ui.height}px; background-image: { ui.backgroundImage ? `url(${ui.backgroundImage})` : undefined };' on:mouseleave={mouseout}>
+  <div class='Screens'>
+    {#each screens.items as screen, i}
+      <Screen {screen} />
+    {/each}
   </div>
-  <div class="Screen"></div>
-  <div class="Buttons">
-    {#each buttons as btn, i}
+  <div class="TouchStrips">
+    <TouchStrip />
+  </div>
+  <div class='Buttons'>
+    {#each buttons.items as btn, i}
       <Button {btn} active={isActive(i, x, $hover)} />
     {/each}
   </div>
-  <div class="Knobs">
-    {#each knobs as knob, i}
+  <div class='Knobs'>
+    {#each knobs.items as knob, i}
       <Knob {knob} />
     {/each}
   </div>

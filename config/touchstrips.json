@@ -1,0 +1,60 @@
+{
+  "types": [
+    {
+      "id": "strip",
+      "width": 85,
+      "height": 750,
+      "backgroundColor": "rgba(20, 0, 147, 0.5)"
+    }
+  ],
+  "items": [
+    {
+      "id": 0,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    },
+    {
+      "id": 1,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    },
+    {
+      "id": 2,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    },
+    {
+      "id": 3,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    },
+    {
+      "id": 4,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    },
+    {
+      "id": 5,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    },
+    {
+      "id": 6,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    },
+    {
+      "id": 7,
+      "type": "strip",
+      "x": 212,
+      "y": 111
+    }
+  ]
+}

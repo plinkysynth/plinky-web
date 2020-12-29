@@ -1,0 +1,39 @@
+{
+  "types": [
+    {
+      "id": "minmax",
+      "width": 59,
+      "height": 59,
+      "backgroundColor": "#000000",
+      "borderColor": "#FFFFFF",
+      "tipColor": "#FFFFFF"
+    },
+    {
+      "id": "endless",
+      "width": 60,
+      "height": 60,
+      "backgroundColor": "#000000",
+      "borderColor": "#FFFFFF"
+    }
+  ],
+  "items": [
+    {
+      "id": "KNOBA",
+      "type": "minmax",
+      "x": 190,
+      "y": 105
+    },
+    {
+      "id": "KNOBB",
+      "type": "minmax",
+      "x": 335,
+      "y": 105
+    },
+    {
+      "id": "KNOBP",
+      "type": "endless",
+      "x": 752,
+      "y": 105
+    }
+  ]
+}

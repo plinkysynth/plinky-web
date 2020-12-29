@@ -1,12 +1,12 @@
 <script>
   import hover from './hover';
   import grabbing from './grabbing';
-  import _config from "./buttons.js";
-  const config = _config.config;
+  import { knobs } from '../lib/config';
+  import styleFormatter from './styleFormatter';
   export let knob = {};
 
   // Merge props from base type
-  knob = Object.assign({}, config.knobs[knob.type], knob);
+  knob = Object.assign({}, knobs.types.find(b => b.id === knob.type), knob);
 
   export let curVal = 0;
   export let minVal = 0;
@@ -16,8 +16,6 @@
 
   let rot; 
   $: rot;
-
-  console.log(rot);
 
   let _grabbing = false;
   let grabStartY = 0;
@@ -75,7 +73,7 @@
   }
 </style>
 
-<div class="Knob" class:grabbing style="top: {knob.y}px; left: {knob.x}px; width: {knob.width}px; height: {knob.height}px; background-color: {knob.backgroundColor}; border-color: {knob.borderColor};" on:mousedown={grab}>
+<div class="Knob" class:grabbing style={styleFormatter(knob)} on:mousedown={grab}>
   {#if knob.tipColor}
     <div class="Tip" style="border-color: {knob.tipColor}; transform: rotate({rot}deg);"></div>
   {/if}

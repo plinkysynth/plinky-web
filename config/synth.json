@@ -1,0 +1,14 @@
+{
+  "engine": {
+    "sampleRate": 32000,
+    "wasmSrc": "/plinky.js",
+    "wasmWaitForVariable": "HEAP8"
+  },
+  "screens": [
+    {
+      "id": "PlinkyScreen",
+      "width": 128,
+      "height": 32
+    }
+  ]
+}

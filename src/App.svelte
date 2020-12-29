@@ -2,6 +2,15 @@
 	import UI from "./components/UI.svelte";
 	import Help from "./components/Help.svelte";
 	import Editor from "./components/Editor.svelte";
+	import Synth from './lib/Synth';
+	import { onMount } from "svelte";
+
+	let synth;
+
+	onMount(() => {
+
+	}) 
+
 	//export let name;
 </script>
 

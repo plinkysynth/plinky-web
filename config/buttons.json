@@ -1,0 +1,25 @@
+{
+  "types": [
+    {
+      "id": "rw",
+      "width": 85,
+      "height": 85,
+      "ledX": "-7%",
+      "ledY": "6%",
+      "led": "#FFFFFF",
+      "borderRadius": "50%"
+    },
+    {
+      "id": "rb",
+      "width": 85,
+      "height": 85,
+      "led": "#4444FF",
+      "ledX": "42.5%",
+      "ledY": "-6%",
+      "borderRadius": "50%"
+    }
+  ],
+  "items": [
+
+  ]
+}

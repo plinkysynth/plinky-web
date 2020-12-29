@@ -1,8 +1,7 @@
 <script>
 
   import hover from './hover';
-  import _config from "./buttons.js";
-  const config = _config.config;
+  import { buttons } from '../lib/config';
 
   export let btn;
   export let active;
@@ -15,11 +14,8 @@
     //hover.set("");
   }
 
-  const leds = config.leds;
-  const buttons = config.buttons;
-
   // Merge props from base type
-  btn = Object.assign({}, buttons[btn.type], btn);
+  btn = Object.assign({}, buttons.types.find(b => b.id === btn.type), btn);
 
 </script>
 
