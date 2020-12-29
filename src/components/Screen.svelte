@@ -1,13 +1,9 @@
 <script>
-
   import styleFormatter from './styleFormatter';
   import { onMount } from 'svelte';
-
   import Synth from '../lib/Synth';
-
   export let screen;
 
-  let ctx;
   let canvas;
 
   onMount(() => {

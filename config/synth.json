@@ -1,6 +1,8 @@
 {
   "engine": {
     "sampleRate": 32000,
+    "channels": 2,
+    "bufferSize": 1024,
     "wasmSrc": "/plinky.js",
     "wasmWaitForVariable": "HEAP8"
   },

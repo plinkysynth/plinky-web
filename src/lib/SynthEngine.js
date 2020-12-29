@@ -1,14 +1,18 @@
 import * as config from './config';
 import fetchInject from 'fetch-inject';
+import scaleValue from './scaleValue';
 
 class SynthEngine {
 
   constructor() {
 
-    console.log('CONFIG:', config);
+    console.log('[SynthEngine] Config:', config);
 
     this.config = config;
+    
     this.sampleRate = config.synth.engine.sampleRate;
+    this.bufferSize = config.synth.engine.bufferSize;
+
     this.buttons = config.buttons;
     this.screens = config.screens;
     this.knobs = config.knobs;
@@ -39,8 +43,6 @@ class SynthEngine {
 
   }
 
-  loadingFinished() {}
-
   setup() {
 
     // Set up image contexts correctly from synth config
@@ -55,10 +57,14 @@ class SynthEngine {
       return screen;
     })
 
+    console.log(`[SynthEngine] Initializing audio context at ${this.sampleRate}Hz with ${config.synth.engine.channels} channel(s) and a buffer of ${this.bufferSize} samples`);
+
     this.audioCtx = new AudioContext({ sampleRate: this.sampleRate });
-    this.scriptNode = this.audioCtx.createScriptProcessor(1024, 0, 2);
+    this.scriptNode = this.audioCtx.createScriptProcessor(this.bufferSize, 0, config.synth.engine.channels);
     this.scriptNode.connect(this.audioCtx.destination);
-    this.scriptNode.onaudioprocess = this.onAudioProcess;
+    this.scriptNode.onaudioprocess = (e) => {
+      this.onAudioProcess(e);
+    }
     
     this.requestAnimationFrame();
 
@@ -80,43 +86,52 @@ class SynthEngine {
     });
   }
 
-  // Buttons
-  registerButton(item) { this.registerNode(this.buttons, item); }
-  getButtonById(id) { return this.buttons.find(item => item.id === id); }
+  registerButton(item, DOMNode)     { this.registerNode(this.buttons, item, DOMNode); }
+  registerConnector(item, DOMNode)  { this.registerNode(this.connectors, item, DOMNode); }
+  registerKnob(item, DOMNode)       { this.registerNode(this.knobs, item, DOMNode); }
+  registerLed(item, DOMNode)        { this.registerNode(this.leds, item, DOMNode); }
+  registerScreen(item, DOMNode)     { this.registerNode(this.screens, item, DOMNode); }
+  registerTouchstrip(item, DOMNode) { this.registerNode(this.touchstrips, item, DOMNode); }
+
+  getButtonById(id)     { return this.buttons.find(item => item.id === id); }
+  getConnectorById(id)  { return this.connectors.find(item => item.id === id); }
+  getTouchstripById(id) { return this.touchstrips.find(item => item.id === id); }
+  getKnobById(id)       { return this.knobs.find(item => item.id === id); }
+  getLedById(id)        { return this.leds.find(item => item.id === id); }
+  getScreenById(id)     { return this.screens.find(item => item.id === id); }
 
   // Touchstrips
-  registerTouchstrip(item) { this.registerNode(this.touchstrips, item); }
-  getTouchstripById(id) { return this.touchstrips.find(item => item.id === id); }
+  touchstripMove(stripId, x, y) {}
+  touchstripDown(stripId, x, y) {}
+  touchstripUp(stripId, x, y) {}
 
   // Knobs
-  registerKnob(item) { this.registerNode(this.knobs, item); }
-  getKnobById(id) { return this.knobs.find(item => item.id === id); }
-
   // Screens
-  registerScreen(item, DOMNode) { this.registerNode(this.screens, item, DOMNode); }
-  getScreenById(id) { return this.screens.find(item => item.id === id); }
-
   // Connectors
-  registerConnector(item) { this.registerNode(this.connectors, item); }
-  getKnobById(id) { return this.connectors.find(item => item.id === id); }
-
   // LEDs
-  registerLed(item) { this.registerNode(this.connectors, item); }
-  getKnobById(id) { return this.connectors.find(item => item.id === id); }
 
+  /**
+   * Render screen data into canvas context
+   * Call this in render()
+   */
   renderScreens() {
     this.screens.forEach(screen => {
       screen._ctx.putImageData(screen._img, 0, 0);
     });
   }
 
+  /**
+   * Request animation frame while keeping instance context
+   */
   requestAnimationFrame() {
     window.requestAnimationFrame(() => {
       this.render();
     });
   }
 
+  loadingFinished() {}
   onAudioProcess() {}
+  render() {}
 
 }
 

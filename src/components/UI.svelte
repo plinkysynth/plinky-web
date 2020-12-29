@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
 
-  import { buttons, knobs, screens, ui } from '../lib/config';
+  import { buttons, knobs, screens, touchstrips, ui } from '../lib/config';
 
   import hover from './hover';
   import grabbing from './grabbing';
@@ -54,7 +54,9 @@
     {/each}
   </div>
   <div class="TouchStrips">
-    <TouchStrip />
+    {#each touchstrips as strip, i}
+      <TouchStrip {strip} />
+    {/each}
   </div>
   <div class='Buttons'>
     {#each buttons as btn, i}

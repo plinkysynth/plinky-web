@@ -1,3 +1,4 @@
+import scaleValue from "./scaleValue";
 import SynthEngine from "./SynthEngine";
 
 class SynthInterface extends SynthEngine {
@@ -5,11 +6,14 @@ class SynthInterface extends SynthEngine {
   constructor() {
     console.log("SynthInterface constructor");
     super();
+    this.currentTouch = null;
   }
 
   loadingFinished() {
 
     _plinky_init();
+
+    // Get image bitmap
     this.bitmapPointer = _getemubitmap();
 
     // Attach pointer to screen
@@ -20,38 +24,22 @@ class SynthInterface extends SynthEngine {
       return screen;
     })
 
-    this.bitmapPointer = _getemubitmap();
+    // Get LED array
+    this.__leds = _getemuleds();
+    this.__leddata = new Uint8ClampedArray(HEAP8.buffer, this.__leds, 9 * 8);
     
-    this._leds = _getemuleds();
-    this.leddata = new Uint8ClampedArray(HEAP8.buffer, this._leds, 9 * 8);
-    
+    // Set up audio buffer
     this.audiobuf = _get_wasm_audio_buf();
 
+    // Run setup from SynthEngine
     this.setup();
-
-    // Quick accessor for screen
-    this.ctx = this.getScreenById('PlinkyScreen')._ctx;
 
     console.log("Plinky initialised");
 
   }
 
-  currentTouch = null;
-
   setCanvas(canvas) {
     this.canvas = canvas;
-  }
-
-  setTouchstrips(touchstrips) {
-    this.touchstrips = touchstrips;
-  }
-
-  setTouchstripValue(stripIndex, position, pressure) {
-    this.currentTouch = {
-      strip: stripIndex,
-      position,
-      pressure
-    };
   }
 
   onAudioProcess(audioProcessingEvent) {
@@ -63,9 +51,12 @@ class SynthInterface extends SynthEngine {
     const l = outputBuffer.getChannelData(0);
     const r = outputBuffer.getChannelData(1);
 
+    //console.log(this.currentTouch);
+
     // Set touch event position
     if(this.currentTouch) {
-      _wasm_settouch(0, pos0.value, pressure0.value);
+      console.log('touch');
+      _wasm_settouch(this.currentTouch.stripIndex, this.currentTouch.position, this.currentTouch.pressure);
     }
 
     // Do a frame of audio
@@ -92,6 +83,65 @@ class SynthInterface extends SynthEngine {
 
   stop() {
     this.audioCtx.suspend();
+  }
+
+  /**
+   * Translate touch strip position from x, y to value range defined in touchstrips.json
+   * @param {String} stripId Strip ID
+   * @param {Number} x  X position on strip (relative from bottom left)
+   * @param {Number} y  Y position on strip (relative from bottom left)
+   */
+  translateTouchstripPositionToPressure(stripId, x, y) {
+
+    const strip = this.getTouchstripById(stripId);
+
+    // Zero point for pressure is in the vertical center of the strip
+
+    const translatedX = Math.ceil(scaleValue(x, strip.minX, strip.maxX, strip.minX, strip.width, strip.minX));
+    const translatedY = strip.maxY - Math.ceil(scaleValue(y, strip.minY, strip.maxY, strip.minY, strip.height, strip.minY));
+
+    return [translatedX, translatedY]
+  }
+
+  touchstripDown(stripId, x, y) {
+    
+    const pos = this.translateTouchstripPositionToPressure(stripId, x, y);
+
+    this.currentTouch = {
+      stripIndex: stripId,
+      position: pos[1],
+      pressure: pos[0]
+    };
+    
+    console.log('touchstripdown', this.currentTouch);
+    
+  }
+
+  touchstripMove(stripId, x, y) {
+
+    const pos = this.translateTouchstripPositionToPressure(stripId, x, y);
+
+    this.currentTouch = {
+      stripIndex: stripId,
+      position: pos[1],
+      pressure: pos[0]
+    };
+
+    console.log('touchstripmove', this.currentTouch);
+
+  }
+
+  touchstripUp(stripId, x, y) {
+
+    const pos = this.translateTouchstripPositionToPressure(stripId, x, y);
+
+    this.currentTouch = {
+      stripIndex: stripId,
+      position: pos[1],
+      pressure: 0
+    };
+    
+    console.log('touchstripup', this.currentTouch);
   }
 
   render() {
