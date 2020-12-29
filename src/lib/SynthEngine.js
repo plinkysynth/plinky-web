@@ -1,20 +1,20 @@
 import * as config from './config';
-import mergeProps from './mergeProps';
 import fetchInject from 'fetch-inject';
 
 class SynthEngine {
 
   constructor() {
 
-    console.log(config);
+    console.log('CONFIG:', config);
 
+    this.config = config;
     this.sampleRate = config.synth.engine.sampleRate;
-    this.buttons = mergeProps(config.buttons);
-    this.screens = mergeProps(config.screens);
-    this.knobs = mergeProps(config.knobs);
-    //this.connectors = mergeProps(config.connectors);
-    this.touchstrips = mergeProps(config.touchstrips);
-    this.leds = mergeProps(config.leds);
+    this.buttons = config.buttons;
+    this.screens = config.screens;
+    this.knobs = config.knobs;
+    this.connectors = config.connectors;
+    this.touchstrips = config.touchstrips;
+    this.leds = config.leds;
 
     this.audioCtx = null;
     this.scriptNode = null;
@@ -43,16 +43,15 @@ class SynthEngine {
 
   setup() {
 
-    console.log('setup');
-
-    // Setup
-    this.data = new Uint8ClampedArray(HEAP8.buffer, this._pointer, 128 * 32 * 4);
-    this.leddata = new Uint8ClampedArray(HEAP8.buffer, this._leds, 9 * 8);
-    
     // Set up image contexts correctly from synth config
+    // Fails if the screen size is something else than what synth expects
     this.screens = this.screens.map(screen => {
       const screenConfig = config.synth.screens.find(c => c.id === screen.id);
-      screen._img = new ImageData(this.data, screenConfig.width, screenConfig.height);
+      screen._data = new Uint8ClampedArray(HEAP8.buffer, screen._pointer, 128 * 32 * 4);
+      screen._img = new ImageData(screen._data, screenConfig.width, screenConfig.height);
+      screen.DOMNode.width = screenConfig.width;
+      screen.DOMNode.height = screenConfig.height;
+      screen._ctx = screen.DOMNode.getContext('2d', screenConfig.canvasContextOptions);
       return screen;
     })
 
@@ -60,6 +59,8 @@ class SynthEngine {
     this.scriptNode = this.audioCtx.createScriptProcessor(1024, 0, 2);
     this.scriptNode.connect(this.audioCtx.destination);
     this.scriptNode.onaudioprocess = this.onAudioProcess;
+    
+    this.requestAnimationFrame();
 
   }
 
@@ -103,7 +104,18 @@ class SynthEngine {
   registerLed(item) { this.registerNode(this.connectors, item); }
   getKnobById(id) { return this.connectors.find(item => item.id === id); }
 
-  renderAnimationFrame() {}
+  renderScreens() {
+    this.screens.forEach(screen => {
+      screen._ctx.putImageData(screen._img, 0, 0);
+    });
+  }
+
+  requestAnimationFrame() {
+    window.requestAnimationFrame(() => {
+      this.render();
+    });
+  }
+
   onAudioProcess() {}
 
 }

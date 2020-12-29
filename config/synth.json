@@ -8,7 +8,12 @@
     {
       "id": "PlinkyScreen",
       "width": 128,
-      "height": 32
+      "height": 32,
+      "canvasContextOptions": {
+        "alpha": false,
+        "antialias": false,
+        "depth": false
+      }
     }
   ]
 }

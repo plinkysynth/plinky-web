@@ -1,15 +1,11 @@
 <script>
 
   import styleFormatter from './styleFormatter';
-  import { screens } from '../lib/config';
   import { onMount } from 'svelte';
 
   import Synth from '../lib/Synth';
 
   export let screen;
-
-  // Merge props from base type
-  screen = Object.assign({}, screens.types.find(b => b.id === screen.type), screen);
 
   let ctx;
   let canvas;

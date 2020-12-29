@@ -5,9 +5,6 @@
   import styleFormatter from './styleFormatter';
   export let knob = {};
 
-  // Merge props from base type
-  knob = Object.assign({}, knobs.types.find(b => b.id === knob.type), knob);
-
   export let curVal = 0;
   export let minVal = 0;
   export let maxVal = 255;

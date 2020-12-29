@@ -3,26 +3,34 @@ import SynthEngine from "./SynthEngine";
 class SynthInterface extends SynthEngine {
 
   constructor() {
-
     console.log("SynthInterface constructor");
-
-    super({
-      sampleRate: 32000,
-    });
-
+    super();
   }
 
   loadingFinished() {
 
-    this.setup(); 
-
     _plinky_init();
+    this.bitmapPointer = _getemubitmap();
 
-    console.log(this);
+    // Attach pointer to screen
+    this.screens = this.screens.map(screen => {
+      if(screen.id === 'PlinkyScreen') {
+        screen._pointer = this.bitmapPointer;
+      }
+      return screen;
+    })
 
-    this._pointer = _getemubitmap();
+    this.bitmapPointer = _getemubitmap();
+    
     this._leds = _getemuleds();
-    this._audiobuf = _get_wasm_audio_buf();
+    this.leddata = new Uint8ClampedArray(HEAP8.buffer, this._leds, 9 * 8);
+    
+    this.audiobuf = _get_wasm_audio_buf();
+
+    this.setup();
+
+    // Quick accessor for screen
+    this.ctx = this.getScreenById('PlinkyScreen')._ctx;
 
     console.log("Plinky initialised");
 
@@ -78,22 +86,6 @@ class SynthInterface extends SynthEngine {
 
   }
 
-  setupScreens() {
-
-    this.ctx = this.canvas.getContext('2d', {
-      alpha: false,
-      antialias: false,
-      depth: false
-    });
-
-    if (!ctx) {
-      throw 'Your browser does not support canvas';
-    }
-    
-    console.log('pointer', this.pointer, 'leds', this.leds, 'audiobuf', this.audiobuf);
-
-  }
-
   start() {
     this.audioCtx.resume();
   }
@@ -104,9 +96,9 @@ class SynthInterface extends SynthEngine {
 
   render() {
     if (calledRun) {
-      this.ctx.putImageData(this.img, 0, 0);
-      var idx = 0;
+      this.renderScreens();
       /*
+      var idx = 0;
       for (var y = 0; y < 9; ++y) {
           for (var x = 0; x < 8; ++x) {
               var c = leddata[idx++];
@@ -115,7 +107,7 @@ class SynthInterface extends SynthEngine {
       } // y
       */
     } // calledRun
-    window.requestAnimationFrame(this.render);
+    this.requestAnimationFrame();
   }
 
 }

@@ -14,9 +14,6 @@
     //hover.set("");
   }
 
-  // Merge props from base type
-  btn = Object.assign({}, buttons.types.find(b => b.id === btn.type), btn);
-
 </script>
 
 <style>

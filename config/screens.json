@@ -3,8 +3,8 @@
     {
       "id": "oled",
       "width": 199,
-      "height": 48,
-      "backgroundColor": "rgba(20, 0, 147, 0.5)"
+      "height": 65,
+      "backgroundColor": "black"
     }
   ],
   "items": [
@@ -12,7 +12,8 @@
       "id": "PlinkyScreen",
       "type": "oled",
       "x": 468,
-      "y": 111
+      "y": 103,
+      "padding": "11px 4px"
     }
   ]
 }

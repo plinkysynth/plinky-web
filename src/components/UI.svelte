@@ -49,7 +49,7 @@
 
 <div class='UI' class:grabbing={$grabbing !== ''} style='border-radius: { ui.borderRadius ? ui.borderRadius : '0' }; background-color: { ui.backgroundColor ? ui.backgroundColor : undefined }; width: {ui.width}px; height: {ui.height}px; background-image: { ui.backgroundImage ? `url(${ui.backgroundImage})` : undefined };' on:mouseleave={mouseout}>
   <div class='Screens'>
-    {#each screens.items as screen, i}
+    {#each screens as screen, i}
       <Screen {screen} />
     {/each}
   </div>
@@ -57,12 +57,12 @@
     <TouchStrip />
   </div>
   <div class='Buttons'>
-    {#each buttons.items as btn, i}
+    {#each buttons as btn, i}
       <Button {btn} active={isActive(i, x, $hover)} />
     {/each}
   </div>
   <div class='Knobs'>
-    {#each knobs.items as knob, i}
+    {#each knobs as knob, i}
       <Knob {knob} />
     {/each}
   </div>
