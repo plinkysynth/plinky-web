@@ -245,11 +245,8 @@ export default class LayoutInterface {
         let dy = scaleValue(deltaY, 0, this.canvas.height, -1*this.canvas.height, this.canvas.height);
 
         const sin = Math.cos(mt);
-        
         const hue = (Math.atan2(dx,dy)*1*fi)*180*sin;
         let saturation= Math.sqrt(dx*dx + dy*dy)*mt;
-        //console.log(saturation);
-        //const saturation=Math.sqrt(deltaX*deltaX + deltaY*deltaY)*100;
 
         const lum = fi*65*speed;
 
