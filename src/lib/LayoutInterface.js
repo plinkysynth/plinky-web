@@ -1,5 +1,35 @@
+import { scale } from 'svelte/types/runtime/transition';
 import * as config from './config';
 import scaleValue from './scaleValue';
+
+const EasingFunctions = {
+  // no easing, no acceleration
+  linear: t => t,
+  // accelerating from zero velocity
+  easeInQuad: t => t*t,
+  // decelerating to zero velocity
+  easeOutQuad: t => t*(2-t),
+  // acceleration until halfway, then deceleration
+  easeInOutQuad: t => t<.5 ? 2*t*t : -1+(4-2*t)*t,
+  // accelerating from zero velocity 
+  easeInCubic: t => t*t*t,
+  // decelerating to zero velocity 
+  easeOutCubic: t => (--t)*t*t+1,
+  // acceleration until halfway, then deceleration 
+  easeInOutCubic: t => t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1,
+  // accelerating from zero velocity 
+  easeInQuart: t => t*t*t*t,
+  // decelerating to zero velocity 
+  easeOutQuart: t => 1-(--t)*t*t*t,
+  // acceleration until halfway, then deceleration
+  easeInOutQuart: t => t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t,
+  // accelerating from zero velocity
+  easeInQuint: t => t*t*t*t*t,
+  // decelerating to zero velocity
+  easeOutQuint: t => 1+(--t)*t*t*t*t,
+  // acceleration until halfway, then deceleration 
+  easeInOutQuint: t => t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t
+}
 
 export default class LayoutInterface {
 
@@ -108,7 +138,7 @@ export default class LayoutInterface {
 
         console.log(this.trails.length)
 
-        const amt = 2;
+        const amt = 4;
   
         if(diffX > amt || diffY > amt) {
   
@@ -117,15 +147,23 @@ export default class LayoutInterface {
           console.log("DIFFX", diffX, "DIFFY", diffY);
 
           let times = Math.floor((diffX > diffY ? diffX : diffY) / amt);
+          let nnx = lastX;
+          let nny = lastY;
 
-          for(let i = 0; i <= times; i++) {
+          for(let i = 0; i < times; i++) {
 
             const newX = lastX - (((lastX - x) / times)) * i;
             const newY = lastY - (((lastY - y) / times)) * i;
+            
+            const newDeltaX = nnx - newX;
+            const newDeltaY = nny - newY;
 
-            console.log([newX, newY]);
+            nnx = newX;
+            nny = newY;
 
-            this.trails.push([newX, newY]);
+            console.log([newX, newY, newDeltaX, newDeltaY]);
+
+            this.trails.push([newX, newY, newDeltaX, newDeltaY, 1+(i/times)]);
 
           }
   
@@ -133,7 +171,7 @@ export default class LayoutInterface {
   
       }
 
-      this.trails.push([x, y]);
+      this.trails.push([x, y, finger.deltaX, finger.deltaY, 1]);
 
     });
 
@@ -164,20 +202,46 @@ export default class LayoutInterface {
 
   drawCursorTrail() {
     
-    const maxTrails = 5000;
+    const maxTrails = 2000;
 
     this.trails.forEach((trail, i) => {
 
       let r,g,b = 255;
       let a = 255;
-      const [ x, y ] = trail;
+      const [ x, y, deltaX, deltaY, speed ] = trail;
 
       let xx = this.ballSize*(i/this.trails.length);
+      let fi = i/this.trails.length;
+      let ti = this.trails.length/i;
 
-      if(xx <= 2) xx = 2;
-      xx *= (Math.cos(Math.sin( ((this.trails.length/i)*this.frame%900) * 0.01 ))* 2) * 5;
+      //xx *= Math.sqrt(deltaX*deltaX + deltaY*deltaY) * 0.01;
+      const minSize = 10;
+      if(xx <= minSize) xx = minSize;
+      xx *= (Math.cos(Math.sin( ((this.trails.length/i)*this.frame%900) * 0.02 ))* 0.1) * 50;
 
-      this.ctx.drawImage(this.images['ball'], x-xx/2, y-xx/2, xx, xx);
+      xx += speed*2;
+
+      let px = xx * Math.sin(this.frame * 0.1) * 1;
+      let py = xx * Math.cos(this.frame * 0.1) * 1;
+
+      if(isFinite(xx)) {
+        const gradient = this.ctx.createRadialGradient(x, y, xx*0.2, x, y, xx / 2.0);
+
+        ///const hue = Math.sin((this.frame+(i/this.trails.length))*0.01)*255;
+        //const saturation = 100;
+        const hue=(Math.atan2(deltaX,deltaY))*180*speed;
+        const saturation=Math.sqrt(deltaX*deltaX + deltaY*deltaY)*100;
+
+        gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 50%, ${fi})`);
+        gradient.addColorStop(0.1, `hsla(${hue}, ${saturation}%, 50%, ${fi*0.05})`);
+        gradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 0%, 0`);
+    
+        this.ctx.fillStyle = gradient;
+    
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, xx / 2, 0, 2 * Math.PI);
+        this.ctx.fill();
+      }
 
       /*
       for(let i=0;i<this.pixelData.length;i++) {
@@ -199,7 +263,7 @@ export default class LayoutInterface {
     }
 
     if(!this.touching || this.trails.length > 8) {
-      //this.trails.splice(0, 2);
+      this.trails.splice(0, Math.ceil(scaleValue(this.trails.length * 0.001, 0, this.trails.length, 0, this.trails.length)));
     }
 
   }

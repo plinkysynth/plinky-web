@@ -42,6 +42,10 @@ export default function touchable(node) {
         id: 0,
         x: e.pageX,
         y: e.pageY,
+        lastX: e.pageX,
+        lastY: e.pageY,
+        deltaX: 0,
+        deltaY: 0,
         force: 1,
         touchable: touchableTarget,
         started: new Date()
@@ -60,6 +64,10 @@ export default function touchable(node) {
           id: touch.identifier,
           x: touch.pageX,
           y: touch.pageY,
+          lastX: touch.pageX,
+          lastY: touch.pageY,
+          deltaX: 0,
+          deltaY: 0,
           force: touch.force,
           touchable,
           started: new Date()
@@ -96,6 +104,10 @@ export default function touchable(node) {
 
           fingers = fingers.map(finger => {
             if(finger.id === 0) {
+              finger.deltaX = moveEvent.x - finger.lastX;
+              finger.deltaY = moveEvent.y - finger.lastY;
+              finger.lastX = finger.x;
+              finger.lastY = finger.y;
               finger.x = moveEvent.pageX;
               finger.y = moveEvent.pageY;
               finger.force = 1;
@@ -119,6 +131,10 @@ export default function touchable(node) {
             // Map our new fingers in memory after real finger positions change
             fingers = fingers.map(finger => {
               if(finger.id === touch.identifier) {
+                finger.deltaX = moveEvent.x - touch.lastX;
+                finger.deltaY = moveEvent.y - touch.lastY;
+                finger.lastX = finger.x;
+                finger.lastY = finger.y;
                 finger.x = touch.pageX;
                 finger.y = touch.pageY;
                 finger.force = touch.force;
