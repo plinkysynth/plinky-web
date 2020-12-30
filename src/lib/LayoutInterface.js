@@ -1,4 +1,3 @@
-import { scale } from 'svelte/types/runtime/transition';
 import * as config from './config';
 import scaleValue from './scaleValue';
 
@@ -117,17 +116,22 @@ export default class LayoutInterface {
   }
 
   ontouchstart(fingers) {
-    this.draw(fingers);
+    this.createTrails(fingers);
     this.touching = true;
   }
 
-  draw(fingers) {
+  createTrails(fingers) {
 
     fingers.forEach(finger => {
 
       const coords = this.translateFromScreenCoordsToCanvasCoords(finger.x, finger.y);
       const x = coords[0];
       const y = coords[1];
+
+      let deltaX = finger.deltaX;
+      let deltaY = finger.deltaY;
+
+      let added = false;
 
       if(this.trails.length > 2) {
 
@@ -136,21 +140,19 @@ export default class LayoutInterface {
         let diffX = Math.abs(x - lastX) || 1;
         let diffY = Math.abs(y - lastY) || 1;
 
-        console.log(this.trails.length)
-
-        const amt = 4;
+        const amt = 2;
   
-        if(diffX > amt || diffY > amt) {
+        let times = Math.floor((diffX > diffY ? diffX : diffY) / amt);
+
+        if(times > 1) {
   
           let i = 1;
+          added = true;
 
-          console.log("DIFFX", diffX, "DIFFY", diffY);
-
-          let times = Math.floor((diffX > diffY ? diffX : diffY) / amt);
           let nnx = lastX;
           let nny = lastY;
 
-          for(let i = 0; i < times; i++) {
+          for(let i = 1; i < times; i++) {
 
             const newX = lastX - (((lastX - x) / times)) * i;
             const newY = lastY - (((lastY - y) / times)) * i;
@@ -158,12 +160,15 @@ export default class LayoutInterface {
             const newDeltaX = nnx - newX;
             const newDeltaY = nny - newY;
 
+            deltaX = newDeltaX;
+            deltaY = newDeltaY;
+
             nnx = newX;
             nny = newY;
 
-            console.log([newX, newY, newDeltaX, newDeltaY]);
+            const speed = EasingFunctions.easeInCubic(i/times > 0.5 ? 1-i/times : i/times);
 
-            this.trails.push([newX, newY, newDeltaX, newDeltaY, 1+(i/times)]);
+            this.trails.push([newX, newY, newDeltaX, newDeltaY, 1+speed]);
 
           }
   
@@ -171,14 +176,16 @@ export default class LayoutInterface {
   
       }
 
-      this.trails.push([x, y, finger.deltaX, finger.deltaY, 1]);
+      if(!added) {
+        this.trails.push([x, y, deltaX, deltaY, 1]);
+      }
 
     });
 
   }
 
   ontouchmove(fingers) {
-    this.draw(fingers);
+    this.createTrails(fingers);
   }
 
   ontouchend(fingers) {
@@ -202,7 +209,7 @@ export default class LayoutInterface {
 
   drawCursorTrail() {
     
-    const maxTrails = 2000;
+    const maxTrails = 600;
 
     this.trails.forEach((trail, i) => {
 
@@ -213,27 +220,41 @@ export default class LayoutInterface {
       let xx = this.ballSize*(i/this.trails.length);
       let fi = i/this.trails.length;
       let ti = this.trails.length/i;
+      let mt = this.trails.length/maxTrails;
 
       //xx *= Math.sqrt(deltaX*deltaX + deltaY*deltaY) * 0.01;
-      const minSize = 10;
-      if(xx <= minSize) xx = minSize;
-      xx *= (Math.cos(Math.sin( ((this.trails.length/i)*this.frame%900) * 0.02 ))* 0.1) * 50;
 
-      xx += speed*2;
+      const f = this.frame%i;
 
-      let px = xx * Math.sin(this.frame * 0.1) * 1;
-      let py = xx * Math.cos(this.frame * 0.1) * 1;
+      xx *= (Math.cos(Math.sin( (fi*this.frame) * fi ))* 0.1) * 200;
+
+      //xx *= speed;
+      xx *= EasingFunctions.easeOutCubic(fi);
+      //console.log(xx);
+
+      if(xx < 5) xx = 5;
+      if(xx > 100) xx = 100;
 
       if(isFinite(xx)) {
-        const gradient = this.ctx.createRadialGradient(x, y, xx*0.2, x, y, xx / 2.0);
+        const gradient = this.ctx.createRadialGradient(x, y, xx*0.1*fi, x, y, xx / 2.0);
 
-        ///const hue = Math.sin((this.frame+(i/this.trails.length))*0.01)*255;
+        //const hue = Math.sin((this.frame+(fi))*0.01)*255;
         //const saturation = 100;
-        const hue=(Math.atan2(deltaX,deltaY))*180*speed;
-        const saturation=Math.sqrt(deltaX*deltaX + deltaY*deltaY)*100;
 
-        gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, 50%, ${fi})`);
-        gradient.addColorStop(0.1, `hsla(${hue}, ${saturation}%, 50%, ${fi*0.05})`);
+        let dx = scaleValue(deltaX, 0, this.canvas.width, -1*this.canvas.width, this.canvas.width);
+        let dy = scaleValue(deltaY, 0, this.canvas.height, -1*this.canvas.height, this.canvas.height);
+
+        const sin = Math.cos(mt);
+        
+        const hue = (Math.atan2(dx,dy)*1*fi)*180*sin;
+        let saturation= Math.sqrt(dx*dx + dy*dy)*mt;
+        //console.log(saturation);
+        //const saturation=Math.sqrt(deltaX*deltaX + deltaY*deltaY)*100;
+
+        const lum = fi*65*speed;
+
+        gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lum}%, ${fi})`);
+        gradient.addColorStop(0.1, `hsla(${hue}, ${saturation}%, ${lum}%, ${fi*0.05})`);
         gradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 0%, 0`);
     
         this.ctx.fillStyle = gradient;
@@ -243,27 +264,14 @@ export default class LayoutInterface {
         this.ctx.fill();
       }
 
-      /*
-      for(let i=0;i<this.pixelData.length;i++) {
-        this.pixelData[i] = 255;
-        if(i % 3 === 0) {
-          this.pixelData[i] = scaleValue(i, 0, 255, 0, this.pixelData.length);
-        }
-      }
-
-      this.pixelData[this.pixelData.length - 1] = 127;
-      //this.ctx.putImageData( this.pixel, x, y);
-      */
-
     });
 
     if(this.trails.length > maxTrails) {
       this.trails = this.trails.slice((this.trails.length - 1 - maxTrails) || 0, this.trails.length - 1);
-      //this.trails = this.trails.splice(0, this.trails.length - maxTrails);
     }
 
     if(!this.touching || this.trails.length > 8) {
-      this.trails.splice(0, Math.ceil(scaleValue(this.trails.length * 0.001, 0, this.trails.length, 0, this.trails.length)));
+      this.trails.splice(0, Math.ceil(scaleValue(this.trails.length * 0.02, 0, this.trails.length, 0, this.trails.length)));
     }
 
   }
