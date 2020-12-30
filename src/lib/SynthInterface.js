@@ -121,8 +121,8 @@ class SynthInterface extends SynthEngine {
 
     x = strip.width - x*2;
 
-    let translatedX = Math.ceil(scaleValue(x, strip.minX, strip.maxX, strip.minX, strip.width, strip.minX));
-    let translatedY = strip.maxY - Math.ceil(scaleValue(y, strip.minY, strip.maxY, strip.minY, strip.height, strip.minY));
+    let translatedX = Math.ceil(scaleValue(x, strip.minX, strip.width, strip.minX, strip.maxX));
+    let translatedY = strip.maxY - Math.ceil(scaleValue(y, strip.minY, strip.height, strip.minY, strip.maxY));
 
     if(translatedX < 0) translatedX = 0;
     if(translatedY < 0) translatedY = 0;
@@ -133,15 +133,6 @@ class SynthInterface extends SynthEngine {
   render() {
     if (calledRun) {
       this.renderScreens();
-      /*
-      var idx = 0;
-      for (var y = 0; y < 9; ++y) {
-          for (var x = 0; x < 8; ++x) {
-              var c = leddata[idx++];
-              dotelems[y][x].style.color = "rgb(" + c + "," + c + "," + c + ")";
-          } //x
-      } // y
-      */
     } // calledRun
     this.requestAnimationFrame();
   }

@@ -1,6 +1,5 @@
 import * as config from './config';
 import fetchInject from 'fetch-inject';
-import scaleValue from './scaleValue';
 
 class SynthEngine {
 
@@ -22,6 +21,9 @@ class SynthEngine {
 
     this.audioCtx = null;
     this.scriptNode = null;
+
+    // Keep layout of touchable objects in memory
+    this.layout = [];
 
     // Load the wasm source
     if(config.synth.engine.wasmSrc) {
@@ -165,6 +167,16 @@ class SynthEngine {
     window.requestAnimationFrame(() => {
       this.render();
     });
+  }
+
+  // Render layout to canvas
+
+
+  // Layout
+  getTouchableAtScreenCoord(x, y) {
+
+
+
   }
 
   loadingFinished() {}

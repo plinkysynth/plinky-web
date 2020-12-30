@@ -9,9 +9,19 @@ function coordAsString(val) {
 
 /**
  * Take in an object with layout attributes and turn it into a string to stick into html style attribute
- * @param {*} obj 
+ * @param {*} attrs 
+ * @param {*} opts
  */
-export default function styleFormatter(obj) {
+export default function styleFormatter(attrs, opts) {
+
+  let obj = Object.assign({}, attrs);
+
+  Object.keys(obj).forEach(key => {
+    const k = key;
+    if(opts && opts.ignore && opts.ignore.indexOf(k) > -1) {
+      obj[k] = null;
+    }
+  });
 
   const styles = {
 

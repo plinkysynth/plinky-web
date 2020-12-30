@@ -36,6 +36,7 @@
     background: #222;
     transition: all 0.1s ease-out;
     opacity: 0;
+    pointer-events: none;
   }
   .Help.hover {
     opacity: 1;

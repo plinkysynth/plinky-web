@@ -64,6 +64,7 @@
 		color: white;
 		background-image: url('/aaa.png');
 	}
+	/*
 	@media(max-width:1440px) {
 		.InterfaceContainer {
 			zoom: 0.75;
@@ -89,4 +90,5 @@
 			zoom: 0.33;
 		}
 	}
+	*/
 </style>

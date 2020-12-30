@@ -8,13 +8,15 @@
   import hover from './stores/hover';
 
   import grabbing from './stores/grabbing';
-  import touching, { touchstart } from './stores/touching';
+  import isTouching from './stores/isTouching';
+  import touchable from './touchable';
 
   import Button from './Button.svelte';
   import Knob from './Knob.svelte';
   import Screen from './Screen.svelte';
   import TouchStrip from './TouchStrip.svelte';
   import styleFormatter from './styleFormatter';
+  import SynthCanvas from './SynthCanvas.svelte';
 
   let x = 3;
 
@@ -29,6 +31,12 @@
 
   const mouseout = function(e) {
     hover.set('');
+  }
+
+  function touchablestart(e) {
+  }
+
+  function touchablemove(e) {
   }
 
 </script>
@@ -57,11 +65,16 @@
 <div
   class='UI'
   class:grabbing={$grabbing !== ''}
-  class:touching={$touching}
-  style='{styleFormatter(ui)}' 
+  class:touching={$isTouching}
+  style='{styleFormatter(ui, {
+    ignore: ['backgroundImage']
+  })}'
   on:mouseleave={mouseout}
-  on:touchstart={touchstart}
+  use:touchable
+  on:touchablestart={touchablestart}
+  on:touchablemove={touchablemove}
 >
+<!--
   <div class='Screens'>
     {#each screens as screen, i}
       <Screen {screen} />
@@ -82,4 +95,6 @@
       <Knob {knob} />
     {/each}
   </div>
+  -->
+  <SynthCanvas />
 </div>
