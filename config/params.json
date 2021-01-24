@@ -1,169 +1,267 @@
 [
   {
     "id": "P_PWM",
-    "min": 0,
-    "max": 127,
+    "min": -1,
+    "max": 1,
+    "default": 0,
     "cc": 13,
-    "description": ""
+    "name": "Shape",
+    "description": "Controls the shape of the oscillators in Plinky. When exactly 0%, you get a supersaw: 4 sawtooths per voice. When positive, you blend smoothly through 16 ROM wavetable shapes provided by @miunau. When negative, you get PWM control of pulse/square shapes."
   },
   {
     "id": "P_DRIVE",
-    "min": 0,
-    "max": 127,
+    "min": -1,
+    "max": 1,
+    "default": 0,
     "cc": 4,
-    "description": ""
+    "name":"Drive",
+    "description": "Drive/Saturation. When turned up high, the saturation unit will create guitar-like tones, especially when playing polyphonically. It can also be used to compensate for changes in volume, for example if the Sensitivity parameter is low."
   },
   {
     "id": "P_PITCH",
-    "min": 0,
-    "max": 127,
+    "min": -1,
+    "max": 1,
+    "default": 0,
     "cc": 9,
-    "description": ""
+    "name": "Pitch",
+    "description": "Use this to (fine) tune plinky. Range is 1 octave up or down, unquantized."
   },
   {
     "id": "P_OCT",
-    "min": 0,
-    "max": 127,
+    "min": -4,
+    "max": 4,
+    "default": 0,
     "cc": -1,
-    "description": ""
+    "name": "Octave",
+    "description": "Use this to quickly change pitch, quantised to octaves."
   },
   {
     "id": "P_GLIDE",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0,
     "cc": 5,
-    "description": ""
+    "name": "Glide",
+    "description": "Controls the speed of the portamento between notes in a single voice. Higher = slower"
   },
   {
     "id": "P_INTERVAL",
-    "min": 0,
-    "max": 127,
+    "min": -1,
+    "max": 1,
+    "default": 0,
     "cc": 14,
-    "description": ""
+    "name": "Interval",
+    "description": "Each voice has several oscillators, and this sets a fixed interval between them, from +1 to -1 octaves."
   },
   {
     "id": "P_NOISE",
-    "min": -127,
-    "max": 127,
+    "min": 0,
+    "max": 1,
+    "default": 0,
     "cc": 2,
-    "description": ""
+    "name": "Noise",
+    "description": "Each voice can add a variable amount of white noise to the oscillator, before the low-pass gate."
   },
   {
     "id": "P_MIXRESO",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": 71,
-    "description": ""
+    "name": "Resonance",
+    "description": "Each voice has a 2-pole lowpass gate controlled by your finger pressure and the Sensitivity control. This parameter adds resonance to the filter. Note that at high levels of resonance, you may wish to adjust the drive or the high pass filter paramters."
   },
   {
     "id": "P_ROTATE",
-    "min": 0,
-    "max": 127,
+    "min": -24,
+    "max": 24,
     "cc": -1,
-    "description": ""
+    "name": "Degree",
+    "description": "Think of this as a quantized pitch control, that transposes plinky in such a way that all the notes stay in the same scale. In other words, it changes which degree of the scale is played, but not the root of the scale itself."
   },
   {
     "id": "P_SCALE",
     "min": 0,
-    "max": 127,
+    "max": 26,
     "cc": -1,
-    "description": ""
+    "name": "Scale",
+    "enum_id": [
+        "S_MAJOR",			
+        "S_MINOR",			
+        "S_HARMMINOR",		
+        "S_PENTA",			
+        "S_PENTAMINOR",		
+        "S_HIRAJOSHI",		
+        "S_INSEN",			
+        "S_IWATO",			
+        "S_MINYO",			
+        "S_FIFTHS",			
+        "S_TRIADMAJOR",		
+        "S_TRIADMINOR",		
+        "S_DORIAN",		
+        "S_PHYRGIAN",		
+        "S_LYDIAN",			
+        "S_MIXOLYDIAN",		
+        "S_AEOLIAN",		
+        "S_LOCRIAN",			
+        "S_BLUESMINOR",		
+        "S_BLUESMAJOR",		
+        "S_ROMANIAN",		
+        "S_WHOLETONE",		
+        "S_HARMONICS",
+        "S_HEXANY", 
+        "S_JUST",
+        "S_CHROMATIC",
+        "S_LAST"
+    ],
+    "enum_name": [
+        "Major",
+        "Minor",
+        "Harminoc Min",
+        "Penta Maj",
+        "Penta Min",
+        "Hirajoshi",
+        "Insen",
+        "Iwato",
+        "Minyo",
+        "Fifths",
+        "Triad Maj",
+        "Triad Min",
+        "Dorian",
+        "Phrygian",
+        "Lydian",
+        "Mixolydian",
+        "Aeolian",
+        "Locrian",
+        "Blues Min",
+        "Blues Maj",
+        "Romanian",
+        "Wholetone",
+        "Harmonics",
+        "Hexany",
+        "Just",
+        "Chromatic"
+    ],
+    "description": "Selects which scale of notes plinky uses", 
   },
   {
     "id": "P_MICROTUNE",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.125,
     "cc": -1,
-    "description": ""
+    "name": "Microtune",
+    "description": "Controls how much vertical movement of your finger detunes the note. This also thickens the sound through 'unison' detuning of the individual oscillators in each note, so values above 0 are recommended."
   },
   {
     "id": "P_STRIDE",
     "min": 0,
-    "max": 127,
+    "max": 13,
+    "name": "Stride",
+    "default": 7,
     "cc": -1,
-    "description": ""
+    "description": "Controls the interval, in semitones, between each column of plinky. It defaults to 7 semitones, a perfect fifth, like a Cello or Violin. The notes are always snapped to the chosen scale, even if the stride calls for chromatic notes, so plinky does its best to choose column pitches that follow this stride while staying in-scale."
   },
   {
     "id": "P_SENS",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.5,
+    "name": "Sensitivity"
     "cc": 3,
-    "description": ""
+    "description": "Master sensitivty, controlling the mapping of finger pressure to the opening/closing of each voice's low-pass gate. If you are looking for a lowpass cutoff frequency, this is the parameter you want."
   },
   {
     "id": "P_A",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "name": "Attack",
+    "default": 0.125,
     "cc": 73,
-    "description": ""
+    "description": "Attack time for the main envelope that controls the lowpass gate. The peak level is set by the pressure of your finger, modulated by the Sensitivity parameter."
   },
   {
     "id": "P_D",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "name": "Decay",
+    "default": 0.25,
     "cc": 75,
-    "description": ""
+    "description": "Decay time for the main envelope that controls the lowpass gate."
   },
   {
     "id": "P_S",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 1,
     "cc": 74,
-    "description": ""
+    "name": "Sustain",
+    "description": "Sustain level for the main envelope that controls the lowpass gate."
   },
   {
     "id": "P_R",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": 72,
-    "description": ""
+    "default": 0.125,
+    "name": "Release",
+    "description": "Release time for the main envelope that controls the lowpass gate."
   },
   {
     "id": "P_ENV1_UNUSED",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": -1,
     "description": ""
   },
   {
     "id": "P_ENV_LEVEL",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.5,
     "cc": 19,
-    "description": ""
+    "name": "Env 2 Level",
+    "description": "Sets the peak level of the second envelope, which can be used as a modulation source."
   },
   {
     "id": "P_A2",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.125,
     "cc": 20,
-    "description": ""
+    "name": "Attack 2",
+    "description": "Attack time of the second envelope, which can be used as a modulation source."
   },
   {
     "id": "P_D2",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.25,
     "cc": 21,
-    "description": ""
+    "name": "Decay 2",
+    "description": "Decay time of the second envelope, which can be used as a modulation source."
   },
   {
     "id": "P_S2",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 1,
     "cc": 22,
-    "description": ""
+    "name": "Sustain 2",
+    "description": "Sustain level of the second envelope, which can be used as a modulation source."
   },
   {
     "id": "P_R2",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": 23,
-    "description": ""
+    "name": "Release 2",
+    "default": 0.125,
+    "description": "Release time of the second envelope, which can be used as a modulation source."
   },
   {
     "id": "P_ENV2_UNUSED",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": -1,
     "description": ""
   },
@@ -681,7 +779,7 @@
     "description": ""
   },
   {
-    "id": "P_SYS_UNUSED4",
+    "id": "P_ACCEL_SENS",
     "min": 0,
     "max": 127,
     "cc": -1,
