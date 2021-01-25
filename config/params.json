@@ -65,9 +65,67 @@
   {
     "id": "P_SCALE",
     "min": 0,
-    "max": 127,
+    "max": 26,
     "cc": -1,
-    "description": ""
+    "name": "Scale",
+    "enum_id": [
+        "S_MAJOR",			
+        "S_MINOR",			
+        "S_HARMMINOR",		
+        "S_PENTA",			
+        "S_PENTAMINOR",		
+        "S_HIRAJOSHI",		
+        "S_INSEN",			
+        "S_IWATO",			
+        "S_MINYO",			
+        "S_FIFTHS",			
+        "S_TRIADMAJOR",		
+        "S_TRIADMINOR",		
+        "S_DORIAN",		
+        "S_PHYRGIAN",		
+        "S_LYDIAN",			
+        "S_MIXOLYDIAN",		
+        "S_AEOLIAN",		
+        "S_LOCRIAN",			
+        "S_BLUESMINOR",		
+        "S_BLUESMAJOR",		
+        "S_ROMANIAN",		
+        "S_WHOLETONE",		
+        "S_HARMONICS",
+        "S_HEXANY", 
+        "S_JUST",
+        "S_CHROMATIC",
+        "S_LAST"
+    ],
+    "enum_name": [
+        "Major",
+        "Minor",
+        "Harminoc Min",
+        "Penta Maj",
+        "Penta Min",
+        "Hirajoshi",
+        "Insen",
+        "Iwato",
+        "Minyo",
+        "Fifths",
+        "Triad Maj",
+        "Triad Min",
+        "Dorian",
+        "Phrygian",
+        "Lydian",
+        "Mixolydian",
+        "Aeolian",
+        "Locrian",
+        "Blues Min",
+        "Blues Maj",
+        "Romanian",
+        "Wholetone",
+        "Harmonics",
+        "Hexany",
+        "Just",
+        "Chromatic"
+    ],
+    "description": "Selects which scale of notes plinky uses"
   },
   {
     "id": "P_MICROTUNE",
@@ -86,7 +144,9 @@
   {
     "id": "P_SENS",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.5,
+    "name": "Sensitivity",
     "cc": 3,
     "description": ""
   },
@@ -170,179 +230,270 @@
   {
     "id": "P_DLSEND",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0,
+    "name": "Delay Send",
     "cc": 94,
-    "description": ""
+    "description": "Amount of the dry sound sent to the delay unit. Turn it up for echos!"
   },
   {
     "id": "P_DLTIME",
-    "min": 0,
-    "max": 127,
+    "min": -1,
+    "max": 1,
+    "default": 0.375,
     "cc": 12,
-    "description": ""
+    "name": "Delay Time",
+    "description": "The time between each echo. Positive values are un-quantized; negative values are multiples of the current tempo."
   },
   {
     "id": "P_DLRATIO",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 1,
     "cc": -1,
-    "description": ""
+    "name": "Delay Ratio",
+    "description": "The delay unit is stereo. This moves the right tap to an earlier time, causing ping-pong poly-rhthmic repeats. Try simple ratios like 33%, 50%, 75%."
   },
   {
     "id": "P_DLWOB",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.25,
+    "name": "Delay Wobble",
     "cc": -1,
-    "description": ""
+    "description": "Amount of simulated tape speed wobble, causing pitch distortions in the delay."
   },
   {
     "id": "P_DLFB",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.5,
+    "name": "Delay Feedback",
     "cc": 95,
-    "description": ""
+    "description": "Amount of feedback - the volume of each echo reduces by this amount."
   },
   {
     "id": "P_TEMPO",
-    "min": 0,
-    "max": 127,
+    "min": -1,
+    "max": 1,
+    "name": "BPM",
+    "remap": "120*Math.pow(2,x)",
+    "default": 0,
     "cc": -1,
-    "description": ""
+    "description": "Tempo in BPM. You can also tap this parameter pad rhythmically to set the tempo."
   },
   {
     "id": "P_RVSEND",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "name": "Reverb Send",
+    "default": 0.25,
     "cc": 91,
-    "description": ""
+    "description": "Amount of the dry sound sent to the reverb unit. Turn it up for reverb!"
   },
   {
     "id": "P_RVTIME",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.5,
+    "name": "Reverb Time",
     "cc": 92,
-    "description": ""
+    "description": "Reverb time. controls the length of the decay of the reverb."
   },
   {
     "id": "P_RVSHIM",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.25,
+    "name": "Shimmer",
     "cc": 93,
-    "description": ""
+    "description": "Amount of octave-up signal that is fed into the reverb, causing a shimmer effect."
   },
   {
     "id": "P_RVWOB",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 0.25,
+    "name": "Reverb Wobble",
     "cc": -1,
-    "description": ""
+    "description": "Amount of simulated tape speed wobble, causing pitch distortions in the reverb. Avoids metallic artefacts."
   },
   {
     "id": "P_RVUNUSED",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": -1,
     "description": ""
   },
   {
     "id": "P_SWING",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": -1,
-    "description": ""
+    "name": "Swing",
+    "description": "OUT OF ORDER. This parameter will be used to add swing in a future firmware update"
   },
   {
     "id": "P_ARPONOFF",
     "min": 0,
-    "max": 127,
+    "max": 1,
     "cc": 102,
-    "description": ""
+    "default": 0,
+    "name": "Arp on/off",
+    "description": "Switches the arpeggiator on and off."
   },
   {
     "id": "P_ARPMODE",
     "cc": 103,
-    "enum": {
-      "ARP_UP": "ARP_UP",
-      "ARP_DOWN": "ARP_DOWN",
-      "ARP_UPDOWN": "ARP_UPDOWN",
-      "ARP_UPDOWNREP": "ARP_UPDOWNREP",
-      "ARP_PEDALUP": "ARP_PEDALUP",
-      "ARP_PEDALDOWN": "ARP_PEDALDOWN",
-      "ARP_PEDALUPDOWN": "ARP_PEDALUPDOWN",
-      "ARP_RANDOM": "ARP_RANDOM",
-      "ARP_RANDOM2": "ARP_RANDOM2",
-      "ARP_ALL": "ARP_ALL",
-      "ARP_UP8": "ARP_UP8",
-      "ARP_DOWN8": "ARP_DOWN8",
-      "ARP_UPDOWN8": "ARP_UPDOWN8",
-      "ARP_RANDOM8": "ARP_RANDOM8",
-      "ARP_RANDOM28": "ARP_RANDOM28",
-      "ARP_LAST": "ARP_LAST"
-    },
-    "description": "Arpeggiator mode"
+    "default": 0,
+  "min": 0,
+  "max": 15,
+  "name": "Arpeggiator Mode",
+    "enum_id": [
+      "ARP_UP",
+      "ARP_DOWN",
+      "ARP_UPDOWN",
+      "ARP_UPDOWNREP",
+      "ARP_PEDALUP",
+      "ARP_PEDALDOWN",
+      "ARP_PEDALUPDOWN",
+      "ARP_RANDOM",
+      "ARP_RANDOM2",
+      "ARP_ALL",
+      "ARP_UP8",
+      "ARP_DOWN8",
+      "ARP_UPDOWN8",
+      "ARP_RANDOM8",
+      "ARP_RANDOM28",
+      "ARP_LAST"
+    ],
+    "enum_name": [
+      "Up",
+      "Down",
+      "Up then Down",
+      "Up then Down (repeat end notes)",
+      "Up with lowest note pedal",
+      "Down with lowest note pedal",
+      "Up then down with lowest note pedal",
+      "Random",
+      "Random playing 2 notes at a time",
+      "Repeat all notes (polyphonic)",
+      "Up (all 8 columns)",
+      "Down (all 8 columns)",
+      "Up then Down (all 8 columns)",
+      "Random (all 8 columns)",
+      "Random, 2 notes at a time (all 8 columns)"
+    ],
+    "description": "Arpeggiator mode. The '8 column' modes include every column, even those without a note, introducing rests into the arpeggio."
   },
   {
     "id": "P_ARPDIV",
-    "min": 0,
-    "max": 127,
+    "min": -1,
+    "max": 22,
+    "default": 0.09090909,
+    "name": "Arp Clock Divide",
+    "enum_id": [
+      "1","2", "3","4","5", "6","8","10", "12","16","20", "24","32","40", "48","64","80", "96","128","160", "192", "256" 
+    ],
+    "enum_name": [
+      "1/32","2/32", "3/32","4/32","5/32", "6/32","8/32","10/32", "12/32","16/32","20/32", "24/32","32/32","40/32", "48/32","64/32","80/32", "96/32","128/32","160/32", "192/32", "256/32" 
+    ],
     "cc": -1,
-    "description": ""
+    "description": "Sets the speed of the arpeggiator. Negative numbers are un-quantized, positive numbers divide a 32nd note clock."
   },
   {
     "id": "P_ARPPROB",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 1,
     "cc": -1,
-    "description": ""
+    "name": "Arp Probability / Density",
+    "description": "Sets the probability of the apreggiator progressing on each tick of its clock. If the Arp Length parameter is 0, this is a true random probability, otherwise it's the density of a Euclidean rhythm."
   },
   {
     "id": "P_ARPLEN",
-    "min": 0,
-    "max": 127,
+    "min": -17,
+    "max": 17,
+    "default": 8,
     "cc": -1,
-    "description": ""
+    "name": "Arp Pattern Length",
+    "description": "When non zero, this sets the length of the euclidean pattern used by the arp. Use the Arp probability parameter to change how many note are included in each pattern. Negative values treat rests differently, try both."
   },
   {
     "id": "P_ARPOCT",
     "min": 0,
-    "max": 127,
+    "max": 4,
+    "default": 0,
     "cc": -1,
-    "description": ""
+    "name": "Arp Octaves",
+    "description": "Sets how many octaves the arpeggiator ranges over."
   },
   {
     "id": "P_LATCHONOFF",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "name": "Latch on/off",
     "cc": -1,
-    "description": ""
+    "description": "Switches the latch on/off. When on, played notes will sustain even when you take your fingers off plinky. Useful for chords, arps, drones, or using plinky as an oscillator voice."
   },
   {
     "id": "P_SEQMODE",
     "min": 0,
-    "max": 127,
+    "max": 6,
+    "name": "Sequencer Mode",
+    "default": 0,
+    "enum_id": [
+      "SEQ_PAUSE",
+      "SEQ_FWD",
+      "SEQ_BACK",
+      "SEQ_PINGPONG",
+      "SEQ_PINGPONGREP",
+      "SEQ_RANDOM",
+      "SEQ_LAST"    
+    ],
+    "enum_name": [
+      "Pause",
+      "Forwards",
+      "Backwards",
+      "Pingpong",
+      "Pingpong (repeat end notes)",
+      "Random"
+    ],
     "cc": -1,
-    "description": ""
+    "description": "Sets the order that notes are played by the sequencer."
   },
   {
     "id": "P_SEQDIV",
     "min": 0,
-    "max": 127,
+    "max": 22,
+    "default": 0.27272727,
+    "name": "Seq Clock Divide",
+    "enum_id": [
+      "1","2", "3","4","5", "6","8","10", "12","16","20", "24","32","40", "48","64","80", "96","128","160", "192", "256" 
+    ],
+    "enum_name": [
+      "1/32","2/32", "3/32","4/32","5/32", "6/32","8/32","10/32", "12/32","16/32","20/32", "24/32","32/32","40/32", "48/32","64/32","80/32", "96/32","128/32","160/32", "192/32", "256/32" 
+    ],
     "cc": -1,
-    "description": ""
+    "description": "Sets the speed of the sequencer. Negative numbers are un-quantized, positive numbers divide a 32nd note clock."
   },
   {
     "id": "P_SEQPROB",
     "min": 0,
-    "max": 127,
+    "max": 1,
+    "default": 1,
     "cc": -1,
-    "description": ""
+    "name": "Seq Probability / Density",
+    "description": "Sets the probability of the sequencer progressing on each tick of its clock. If the Arp Length parameter is 0, this is a true random probability, otherwise it's the density of a Euclidean rhythm."
   },
   {
     "id": "P_SEQLEN",
-    "min": 0,
-    "max": 127,
+    "min": -17,
+    "max": 17,
+    "default": 8,
     "cc": -1,
-    "description": ""
+    "name": "Seq Pattern Length",
+    "description": "When non zero, this sets the length of the euclidean pattern used by the sequencer. Use the Seq Probability parameter to change how many note are included in each pattern. Negative values treat rests differently, try both."
   },
   {
     "id": "P_GATE_LENGTH",
