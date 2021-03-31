@@ -38,6 +38,8 @@ export default function styleFormatter(attrs, opts) {
     'border-radius': obj.borderRadius ? coordAsString(obj.borderRadius) : undefined,
     'border-width': obj.borderWidth ? coordAsString(obj.borderWidth) : undefined,
 
+    'transform': obj.transform ? obj.transform : undefined,
+
     'width': obj.width ? coordAsString(obj.width) : undefined,
     'height': obj.height ? coordAsString(obj.height) : undefined,
     'top': obj.y ? coordAsString(obj.y) : undefined,

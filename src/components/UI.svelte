@@ -17,8 +17,11 @@
   import TouchStrip from './TouchStrip.svelte';
   import styleFormatter from './styleFormatter';
   import SynthCanvas from './SynthCanvas.svelte';
+  import Synth from '../lib/Synth';
+  import layout from '../lib/layout';
 
   let x = 3;
+  let hasInteracted = false;
 
   setInterval(() => {
     x = x + 1;
@@ -29,14 +32,63 @@
     return h === '' && i % y === 0;
   }
 
+  function start() {
+    hasInteracted = true;
+    Synth.userHasInteracted = true;
+  }
+
   const mouseout = function(e) {
     hover.set('');
   }
 
   function touchablestart(e) {
+    Synth.touchMove(e.detail);
   }
 
   function touchablemove(e) {
+    Synth.touchMove(e.detail);
+  }
+
+  function touchableend(e) {
+    Synth.touchUp(e.detail);
+  }
+
+  let container;
+
+  onMount(() => {
+    layout.registerUIContainer(container);
+  });
+
+  let keysdown = [];
+
+  function onkeydown(e) {
+
+    if(e.repeat) return;
+
+    console.log(e);
+
+    if(e.key === 'q' && keysdown.indexOf('ALT1') === -1) {
+      Synth.buttonDown('ALT1');
+      keysdown.push('ALT1');
+    }
+    else if(e.key === 'w' && keysdown.indexOf('ALT2') === -1) {
+      Synth.buttonDown('ALT2');
+      keysdown.push('ALT2');
+    }
+
+  }
+
+  function onkeyup(e) {
+
+    if(e.key === 'q') {
+      Synth.buttonUp('ALT1');
+      keysdown = keysdown.filter(k => k !== 'ALT1');
+    }
+    else if(e.key === 'w') {
+      Synth.buttonUp('ALT2');
+      keysdown = keysdown.filter(k => k !== 'ALT2');
+    }
+
   }
 
 </script>
@@ -58,23 +110,41 @@
     pointer-events: none;
   }
   .UI.touching {
-    cursor: move;
+    cursor: pointer;
+  }
+  .interact {
+    width: 100%;
+    height: 100%;
+    color: white;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.75);
+    z-index: 1000;
   }
 </style>
 
+<svelte:window on:keydown={onkeydown} on:keyup={onkeyup} />
+
 <div
+  bind:this={container}
   class='UI'
   class:grabbing={$grabbing !== ''}
   class:touching={$isTouching}
   style='{styleFormatter(ui, {
-    ignore: ['backgroundImage']
+    ignore: ['width', 'height']
   })}'
   on:mouseleave={mouseout}
   use:touchable
   on:touchablestart={touchablestart}
   on:touchablemove={touchablemove}
+  on:touchableend={touchableend}
 >
-<!--
   <div class='Screens'>
     {#each screens as screen, i}
       <Screen {screen} />
@@ -95,6 +165,11 @@
       <Knob {knob} />
     {/each}
   </div>
-  -->
   <SynthCanvas />
+  {#if !hasInteracted}
+    <div class="interact">
+      <button on:click={start}>Click to start</button>
+    </div>
+  {/if}
 </div>
+

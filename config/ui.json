@@ -1,6 +1,6 @@
 {
-  "backgroundColor": "#111111",
-  "backgroundImage": "https://www.miunau.com/ul/plinky_alpha_2048.png",
+  "backgroundColor": "#060606",
+  "backgroundImage": "https://www.miunau.com/ul/plinky_bg.png",
   "width": 1024,
   "height": 1076,
   "borderRadius": "18px"

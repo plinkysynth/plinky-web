@@ -1,5 +1,6 @@
 import * as config from './config';
 import scaleValue from './scaleValue';
+import clamp from './clamp';
 
 const EasingFunctions = {
   // no easing, no acceleration
@@ -32,11 +33,11 @@ const EasingFunctions = {
 
 export default class LayoutInterface {
 
-  trails = [];
-  frame = 0;
-  touching = false;
-
   constructor() {
+
+    this.trails = [];
+    this.frame = 0;
+    this.touching = false;
 
     // Set up config shorthands
     this.config = config;
@@ -48,6 +49,7 @@ export default class LayoutInterface {
     this.leds = config.leds;
 
     this.ballSize = 40;
+    this.loopCounter = 0;
     this.images = {};
 
   }
@@ -69,10 +71,8 @@ export default class LayoutInterface {
     this.ctx.msImageSmoothingEnabled = true;
 
     if(this.config.ui.backgroundImage) {
-      await this.loadImage('bg', this.config.ui.backgroundImage, this.canvas.width, this.canvas.height);
+      //await this.loadImage('bg', this.config.ui.backgroundImage, this.canvas.width, this.canvas.height);
     }
-
-    await this.loadImage('ball', 'https://www.miunau.com/ul/ball.png', this.ballSize, this.ballSize);
 
     this.requestAnimationFrame();
 
@@ -108,84 +108,12 @@ export default class LayoutInterface {
     return img;
   }
 
-  /**
-   * Draw the background to the UI
-   */
-  drawBackground() {
-    this.ctx.drawImage(this.images['bg'], 0, 0, this.canvas.width, this.canvas.height);
-  }
-
   ontouchstart(fingers) {
-    this.createTrails(fingers);
     this.touching = true;
   }
 
-  createTrails(fingers) {
-
-    fingers.forEach(finger => {
-
-      const coords = this.translateFromScreenCoordsToCanvasCoords(finger.x, finger.y);
-      const x = coords[0];
-      const y = coords[1];
-
-      let deltaX = finger.deltaX;
-      let deltaY = finger.deltaY;
-
-      let added = false;
-
-      if(this.trails.length > 2) {
-
-        let lastTrailSpot = this.trails[this.trails.length - 1];
-        let [ lastX, lastY ] = lastTrailSpot;
-        let diffX = Math.abs(x - lastX) || 1;
-        let diffY = Math.abs(y - lastY) || 1;
-
-        const amt = 2;
-  
-        let times = Math.floor((diffX > diffY ? diffX : diffY) / amt);
-
-        if(times > 1) {
-  
-          let i = 1;
-          added = true;
-
-          let nnx = lastX;
-          let nny = lastY;
-
-          for(let i = 1; i < times; i++) {
-
-            const newX = lastX - (((lastX - x) / times)) * i;
-            const newY = lastY - (((lastY - y) / times)) * i;
-            
-            const newDeltaX = nnx - newX;
-            const newDeltaY = nny - newY;
-
-            deltaX = newDeltaX;
-            deltaY = newDeltaY;
-
-            nnx = newX;
-            nny = newY;
-
-            const speed = EasingFunctions.easeInCubic(i/times > 0.5 ? 1-i/times : i/times);
-
-            this.trails.push([newX, newY, newDeltaX, newDeltaY, 1+speed]);
-
-          }
-  
-        }
-  
-      }
-
-      if(!added) {
-        this.trails.push([x, y, deltaX, deltaY, 1]);
-      }
-
-    });
-
-  }
-
   ontouchmove(fingers) {
-    this.createTrails(fingers);
+    this.touching = true;
   }
 
   ontouchend(fingers) {
@@ -207,77 +135,72 @@ export default class LayoutInterface {
     return [ x - canvasX, y - canvasY ];
   }
 
-  drawCursorTrail() {
+  translateFromCanvasCoordsToScreenCoords(x, y) {
+    const [ canvasX, canvasY ] = this.canvasPositionOnScreen();
+    return [ x + canvasX, y + canvasY ];
+  }
+
+  drawLeds() {
+
+    if(window._getemuleds && HEAP8) {
+
+      // Get LED array
+      this.__leds = _getemuleds();
+      this.__leddata = new Uint8ClampedArray(HEAP8.buffer, this.__leds, 9 * 8);
+
+      let i = 0;
+
+      this.config.leds.forEach(led => {
+
+        const lum = Math.sqrt(this.__leddata[i])*16 || 0.1;
+
+        const gradX = led.x;
+        const gradY = led.y;
+
+        let tweenedLum = EasingFunctions.easeOutCubic(lum/255);
+        if(tweenedLum > 0.01 && tweenedLum < 0.2) tweenedLum = 0.2;
+
+        const gradient = this.ctx.createRadialGradient(gradX, gradY, 0, gradX, gradY, tweenedLum*64);
+        
+        const r = led.color[0];
+        const g = led.color[1];
+        const b = led.color[2];
+
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 1)`);
+        gradient.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${tweenedLum*0.1})`);
+        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
     
-    const maxTrails = 600;
+        this.ctx.strokeStyle = '#999';
+        this.ctx.lineWidth = 1;
 
-    this.trails.forEach((trail, i) => {
+        this.ctx.fillStyle = '#000000';
 
-      let r,g,b = 255;
-      let a = 255;
-      const [ x, y, deltaX, deltaY, speed ] = trail;
-
-      let xx = this.ballSize*(i/this.trails.length);
-      let fi = i/this.trails.length;
-      let ti = this.trails.length/i;
-      let mt = this.trails.length/maxTrails;
-
-      //xx *= Math.sqrt(deltaX*deltaX + deltaY*deltaY) * 0.01;
-
-      const f = this.frame%i;
-
-      xx *= (Math.cos(Math.sin( (fi*this.frame) * fi ))* 0.1) * 200;
-
-      //xx *= speed;
-      xx *= EasingFunctions.easeOutCubic(fi);
-      //console.log(xx);
-
-      if(xx < 5) xx = 5;
-      if(xx > 100) xx = 100;
-
-      if(isFinite(xx)) {
-        const gradient = this.ctx.createRadialGradient(x, y, xx*0.1*fi, x, y, xx / 2.0);
-
-        //const hue = Math.sin((this.frame+(fi))*0.01)*255;
-        //const saturation = 100;
-
-        let dx = scaleValue(deltaX, 0, this.canvas.width, -1*this.canvas.width, this.canvas.width);
-        let dy = scaleValue(deltaY, 0, this.canvas.height, -1*this.canvas.height, this.canvas.height);
-
-        const sin = Math.cos(mt);
-        const hue = (Math.atan2(dx,dy)*1*fi)*180*sin;
-        let saturation= Math.sqrt(dx*dx + dy*dy)*mt;
-
-        const lum = fi*65*speed;
-
-        gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lum}%, ${fi})`);
-        gradient.addColorStop(0.1, `hsla(${hue}, ${saturation}%, ${lum}%, ${fi*0.05})`);
-        gradient.addColorStop(1, `hsla(${hue}, ${saturation}%, 0%, 0`);
-    
-        this.ctx.fillStyle = gradient;
-    
         this.ctx.beginPath();
-        this.ctx.arc(x, y, xx / 2, 0, 2 * Math.PI);
+        this.ctx.arc(led.x, led.y, led.width, 0, 2*Math.PI);
         this.ctx.fill();
-      }
+        this.ctx.stroke();
 
-    });
+        this.ctx.fillStyle = gradient;
 
-    if(this.trails.length > maxTrails) {
-      this.trails = this.trails.slice((this.trails.length - 1 - maxTrails) || 0, this.trails.length - 1);
+        this.ctx.beginPath();
+        this.ctx.arc(led.x, led.y, led.width*2*(tweenedLum*128), 0, 2*Math.PI);
+        this.ctx.fill();
+
+        i++;
+
+      });
+
     }
-
-    if(!this.touching || this.trails.length > 8) {
-      this.trails.splice(0, Math.ceil(scaleValue(this.trails.length * 0.02, 0, this.trails.length, 0, this.trails.length)));
-    }
-
   }
 
   render() {
     this.frame++;
+    this.loopCounter++;
+    if(this.loopCounter === 101) {
+      this.loopCounter = 0;
+    }
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    //this.drawBackground();
-    this.drawCursorTrail();
+    this.drawLeds();
     this.requestAnimationFrame();
   }
 
@@ -288,6 +211,10 @@ export default class LayoutInterface {
     window.requestAnimationFrame(() => {
       this.render();
     });
+  }
+
+  registerUIContainer(DOMNode) {
+    this.UIContainer = DOMNode;
   }
 
 }

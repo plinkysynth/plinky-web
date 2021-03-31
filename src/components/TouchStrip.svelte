@@ -12,10 +12,6 @@
   
   const DOMId = `Touchstrip-${strip.group}-${strip.id}`;
 
-  strip.ontouchmove = function(e) {
-    console.log('strip.ontouchmove', e);
-  }
-
   onMount(() => {
     Synth.registerTouchstrip(strip, DOMNode, DOMId);
     registerTouchable('touchstrip', strip);

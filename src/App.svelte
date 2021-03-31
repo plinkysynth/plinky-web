@@ -9,6 +9,8 @@
 
 	onMount(() => {
 
+		console.log(Synth)
+
 	}) 
 
 	//export let name;
@@ -25,6 +27,8 @@
 		<Editor />
 	</div>
 </main>
+
+<svelte:body style="zoom: 0.8;" />
 
 <style>
 	.Interface {

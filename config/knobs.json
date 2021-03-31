@@ -21,19 +21,28 @@
       "id": "KNOBA",
       "type": "minmax",
       "x": 190,
-      "y": 105
+      "y": 105,
+      "synth": {
+        "param": "KNOBA"
+      }
     },
     {
       "id": "KNOBB",
       "type": "minmax",
       "x": 335,
-      "y": 105
+      "y": 105,
+      "synth": {
+        "param": "KNOBB"
+      }
     },
     {
       "id": "KNOBP",
       "type": "endless",
       "x": 752,
-      "y": 105
+      "y": 105,
+      "synth": {
+        "param": "ENDLESS"
+      }
     }
   ]
 }

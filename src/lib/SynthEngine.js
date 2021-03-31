@@ -1,5 +1,7 @@
 import * as config from './config';
 import fetchInject from 'fetch-inject';
+import layout from './layout';
+//import { AudioContext } from 'standardized-audio-context';
 
 class SynthEngine {
 
@@ -18,6 +20,10 @@ class SynthEngine {
     this.connectors = config.connectors;
     this.touchstrips = config.touchstrips;
     this.leds = config.leds;
+    this.currentTouchstripTouches = [];
+
+    // Start engine on user interaction
+    this.userHasInteracted = false;
 
     this.audioCtx = null;
     this.scriptNode = null;
@@ -33,7 +39,12 @@ class SynthEngine {
         const wait = () => {
           if(!window[config.synth.engine.wasmWaitForVariable]) setTimeout(wait, 10);
           else {
-            this.loadingFinished();
+            if(this.userHasInteracted) {
+              this.loadingFinished();
+            }
+            else {
+              setTimeout(wait, 10);
+            }
           }
         }
         wait();
@@ -61,7 +72,14 @@ class SynthEngine {
 
     console.log(`[SynthEngine] Initializing audio context at ${this.sampleRate}Hz with ${config.synth.engine.channels} channel(s) and a buffer of ${this.bufferSize} samples`);
 
-    this.audioCtx = new AudioContext({ sampleRate: this.sampleRate });
+    // Safari does not allow setting the sample rate
+    if(!window.AudioContext) {
+      this.audioCtx = new window.webkitAudioContext();
+    }
+    else {
+      this.audioCtx = new AudioContext({ sampleRate: this.sampleRate });
+    }
+
     this.scriptNode = this.audioCtx.createScriptProcessor(this.bufferSize, 0, config.synth.engine.channels);
     this.scriptNode.connect(this.audioCtx.destination);
     this.scriptNode.onaudioprocess = (e) => {
@@ -103,52 +121,53 @@ class SynthEngine {
   getLedById(id)        { return this.leds.find(item => item.id === id); }
   getScreenById(id)     { return this.screens.find(item => item.id === id); }
 
-  // Touchstrips
-  touchstripDown(stripId, x, y) {
-    
-    const pos = this.translateTouchstripPosition(stripId, x, y);
-
-    this.currentTouch = {
-      stripIndex: stripId,
-      position: pos[1],
-      pressure: pos[0]
-    };
-    
-    console.log('touchstripdown', this.currentTouch);
-    
+  getRelativePositionPosition(x, y) {
   }
 
-  touchstripMove(stripId, x, y) {
+  touchMove(fingers) {
 
-    const pos = this.translateTouchstripPosition(stripId, x, y);
+    this.currentTouchstripTouches = fingers.filter(finger => finger.touchable && finger.touchable.touchableType === 'touchstrip').map(finger => {
 
-    this.currentTouch = {
-      stripIndex: stripId,
-      position: pos[1],
-      pressure: pos[0]
-    };
+      const pos = this.translateTouchstripPosition(finger.touchable.id, finger.x, finger.y);
 
-    console.log('touchstripmove', this.currentTouch);
+      return {
+        stripId: finger.touchable.id,
+        position: pos[1],
+        pressure: pos[0]
+      };
+
+    });
 
   }
 
-  touchstripUp(stripId, x, y) {
+  touchUp(fingers) {
 
-    const pos = this.translateTouchstripPosition(stripId, x, y);
+    if(!fingers.length) this.currentTouchstripTouches = [];
 
-    this.currentTouch = {
-      stripIndex: stripId,
-      position: pos[1],
-      pressure: 0
-    };
-    
-    console.log('touchstripup', this.currentTouch);
+    else {
+
+      this.currentTouchstripTouches = this.currentTouchstripTouches.map(t => {
+
+        if(!fingers.find(finger => finger.touchable.id === t.stripId)) {
+          t.pressure = 0;
+        }
+  
+        return t;
+        
+      });
+  
+    }
+
+
   }
 
   // Knobs
   // Screens
   // Connectors
   // LEDs
+  // Buttons
+  buttonDown() {}
+  buttonUp() {}
 
   /**
    * Render screen data into canvas context
@@ -167,16 +186,6 @@ class SynthEngine {
     window.requestAnimationFrame(() => {
       this.render();
     });
-  }
-
-  // Render layout to canvas
-
-
-  // Layout
-  getTouchableAtScreenCoord(x, y) {
-
-
-
   }
 
   loadingFinished() {}

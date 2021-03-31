@@ -1,3 +1,4 @@
+import layout from "./layout";
 import scaleValue from "./scaleValue";
 import SynthEngine from "./SynthEngine";
 
@@ -6,7 +7,7 @@ class SynthInterface extends SynthEngine {
   constructor() {
     console.log("SynthInterface constructor");
     super();
-    this.currentTouch = null;
+    this.currentButtonTouch = null;
   }
 
   loadingFinished() {
@@ -27,7 +28,7 @@ class SynthInterface extends SynthEngine {
     // Get LED array
     this.__leds = _getemuleds();
     this.__leddata = new Uint8ClampedArray(HEAP8.buffer, this.__leds, 9 * 8);
-    
+
     // Set up audio buffer
     this.audiobuf = _get_wasm_audio_buf();
 
@@ -54,8 +55,23 @@ class SynthInterface extends SynthEngine {
     //console.log(this.currentTouch);
 
     // Set touch event position
-    if(this.currentTouch) {
-      _wasm_settouch(this.currentTouch.stripIndex, this.currentTouch.position, this.currentTouch.pressure);
+    if(this.currentTouchstripTouches.length) {
+
+      this.currentTouchstripTouches.forEach(t => {
+        _wasm_settouch(t.stripId, t.position, t.pressure);
+      });
+
+    }
+
+    const missingStrips = layout.touchstrips ? layout.touchstrips.filter(s => !this.currentTouchstripTouches.find(t => t.stripId === s.id)) : [];
+
+    missingStrips.forEach(t => {
+      _wasm_settouch(t.id, 0, 0);
+    });
+
+    // Set special buttons on bottom strip
+    if(this.currentButtonTouch) {
+      _wasm_settouch(8, this.currentButtonTouch.position, this.currentButtonTouch.pressure);
     }
 
     // Do a frame of audio
@@ -76,25 +92,35 @@ class SynthInterface extends SynthEngine {
 
   }
 
+  buttonDown(buttonId) {
+
+    if(buttonId === 'ALT1') {
+      this.currentButtonTouch = {
+        position: 0,
+        pressure: 2048
+      };
+    }
+    else if (buttonId === 'ALT2') {
+
+      this.currentButtonTouch = {
+        position: 256,
+        pressure: 2048
+      };
+
+    }
+
+  }
+
+  buttonUp(buttonId) {
+    this.currentButtonTouch = {};    
+  }
+
   start() {
     this.audioCtx.resume();
   }
 
   stop() {
     this.audioCtx.suspend();
-  }
-
-  setFingers(fingers) {
-
-    fingers.forEach(finger => {
-
-      // Set fingers on touchstrips
-      if(finger.touchable && finger.touchable.touchableType === 'touchstrip') {
-        //this.touchstripMove(finger.touchable.id, finger.touchable.x, finger.touchable.y);
-      }
-
-    });
-
   }
 
   /**
@@ -106,28 +132,67 @@ class SynthInterface extends SynthEngine {
   translateTouchstripPosition(stripId, x, y) {
 
     const strip = this.getTouchstripById(stripId);
+    const containerRect = strip.DOMNode.getBoundingClientRect();
 
-    // Max point for pressure is in the vertical center of the strip
-    const halfStrip = strip.width / 2;
-    if(x > halfStrip) {
-      x = x - halfStrip;
-    }
-    else if(x < halfStrip) {
-      x = halfStrip - x;
+    x -= containerRect.left;
+    y -= containerRect.top;
+
+    let translatedX;
+    let translatedY;
+
+    if(strip.direction && strip.direction == 'horizontal') {
+
+      // Max point for pressure is in the vertical center of the strip
+      const halfStrip = strip.height / 2;
+      if(y > halfStrip) {
+        y = y - halfStrip;
+      }
+      else if(y < halfStrip) {
+        y = halfStrip - y;
+      }
+      else {
+        y = 0;
+      }
+
+      y = strip.height - y*2;
+
+      translatedY = Math.ceil(scaleValue(x, 0, strip.width, strip.minX, strip.maxX));
+      translatedX = strip.maxY - Math.ceil(scaleValue(y, 0, strip.height, strip.maxY, strip.minY));
+
+      if(translatedX < 0) translatedX = 0;
+      if(translatedY < 0) translatedY = 0;
+      
+
     }
     else {
-      x = 0;
+  
+      // Max point for pressure is in the horizontal center of the strip
+      const halfStrip = strip.width / 2;
+      if(x > halfStrip) {
+        x = x - halfStrip;
+      }
+      else if(x < halfStrip) {
+        x = halfStrip - x;
+      }
+      else {
+        x = 0;
+      }
+  
+      x = strip.width - x*2;
+  
+      translatedX = Math.ceil(scaleValue(x, 0, strip.width, strip.minX, strip.maxX));
+      translatedY = strip.maxY - Math.ceil(scaleValue(y, 0, strip.height, strip.maxY, strip.minY));
+  
+      if(translatedX < 0) translatedX = 0;
+      if(translatedY < 0) translatedY = 0;
+  
     }
 
-    x = strip.width - x*2;
 
-    let translatedX = Math.ceil(scaleValue(x, strip.minX, strip.width, strip.minX, strip.maxX));
-    let translatedY = strip.maxY - Math.ceil(scaleValue(y, strip.minY, strip.height, strip.minY, strip.maxY));
-
-    if(translatedX < 0) translatedX = 0;
-    if(translatedY < 0) translatedY = 0;
+    //console.log('translated', translatedX, translatedY, 'orig', x, y);
 
     return [translatedX, translatedY]
+
   }
 
   render() {

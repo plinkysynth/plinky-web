@@ -18,8 +18,6 @@ export default function touchable(node) {
 
   function handleTouchstart(e) {
 
-    console.log('handleTouchStart', e, _touching, layout);
-    
     let isTouch = true; // a touch or a click event
 
     // Prepare array for touch events. Two or more fingers can start touching
@@ -30,10 +28,10 @@ export default function touchable(node) {
     const touchableTarget = getTouchableByDOMId(e.target.id);
 
     if(!touchableTarget) {
-      //return;
+      return;
     }
 
-    if(e.pageX) {
+    if(e.pageX || e.pageY) {
 
       isTouch = false;
 
@@ -77,16 +75,12 @@ export default function touchable(node) {
       
     }
 
-    console.log("touchstartitems", touchStartItems);
-
     // Push the fingers into the hand
     fingers.push(...touchStartItems);
 
     // Send event that we're starting to touch
-    node.dispatchEvent(new CustomEvent('touchablestart', fingers));
+    node.dispatchEvent(new CustomEvent('touchablestart', { detail: fingers }));
     layout.ontouchstart(fingers);
-
-    console.log("DOWN!!!!!", fingers, isTouch);
 
     // Only add touch events if we're not touching yet
     if(!_touching) {
@@ -98,7 +92,7 @@ export default function touchable(node) {
       // What to do when someone moves their fingers while touching :o
       const touchMoveEvent = (moveEvent) => {
 
-        if(moveEvent.pageX) {
+        if(moveEvent.pageX || moveEvent.pageY) {
 
           const touchable = getTouchableByDOMId(moveEvent.target.id);
 
@@ -152,7 +146,7 @@ export default function touchable(node) {
 
         // Send touch move event
         layout.ontouchmove(fingers);
-        node.dispatchEvent(new CustomEvent('touchablemove', fingers));
+        node.dispatchEvent(new CustomEvent('touchablemove', { detail: fingers }));
 
       };
 
@@ -167,7 +161,7 @@ export default function touchable(node) {
             fingers = fingers.filter(finger => finger.id !== touch.identifier);
           }
 
-          console.log("UP!!!!!!!!", endEvent, fingers);
+          //console.log("UP!!!!!!!!", endEvent, fingers);
           // Send touch end event
 
         }
@@ -175,14 +169,13 @@ export default function touchable(node) {
           fingers = fingers.filter(finger => finger.id !== 0);
         }
 
-        node.dispatchEvent(new CustomEvent('touchableend', fingers));
         layout.ontouchend(fingers);
+        node.dispatchEvent(new CustomEvent('touchableend', { detail: fingers }));
 
         // Only if we're REALLY stopping touching, not just some fingers
         if((endEvent.touches && endEvent.touches.length === 0) || endEvent.pageX) {
           _touching = false;
           isTouching.set(false);
-          console.log("remove touch events");
           
           if(isTouch) {
             window.removeEventListener('touchend', touchEndEvent);

@@ -12,4 +12,11 @@
 
 </script>
 
+<style>
+  canvas {
+    position: relative;
+    pointer-events: none;
+  }
+</style>
+
 <canvas id="SynthCanvas" bind:this={canvas}></canvas>
