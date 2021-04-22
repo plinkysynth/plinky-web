@@ -1,6 +1,6 @@
 # plinky-web
 
-This is an interactive manual for [Plinky](https://www.plinkysynth.com).
+This is an interactive version of [Plinky](https://www.plinkysynth.com).
 
 ## Get started
 
